@@ -1,0 +1,1244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob: https://*.supabase.co; connect-src 'self' https://*.supabase.co wss://*.supabase.co; base-uri 'none'; form-action 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex, nofollow">
+<style>[hidden]{display:none!important}html,body{margin:0}</style>
+<title>Ward Bloods</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#F2F5F4;--surface:#FFFFFF;--surface-2:#EDF2F0;--ink:#15201C;--muted:#5A6762;--line:#D5DDD9;--line-2:#E6ECE9;
+  --accent:#23665A;--accent-ink:#FFFFFF;--accent-soft:#DCEBE7;
+  --hi:#B42318;--hi-bg:#FCEBE9;--lo:#1D5FA8;--lo-bg:#E7EFFA;--warn-bg:#FFF6DD;--warn-ink:#6B4E00;
+  --ch-bg:#FFF2CC;--ch-line:#E3B341;--ch-ink:#3F2E00;--ch-strong:#8A5A00;--ch-item:#FFFBEF;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+  --bg:#0E1412;--surface:#151D1A;--surface-2:#1B2521;--ink:#E3EBE7;--muted:#93A29C;--line:#2A3631;--line-2:#222D29;
+  --accent:#62B4A2;--accent-ink:#08110E;--accent-soft:#1D3530;
+  --hi:#FF8C7C;--hi-bg:#3A1C18;--lo:#8DBBF2;--lo-bg:#152539;--warn-bg:#352C12;--warn-ink:#F1D98A;
+  --ch-bg:#2A220E;--ch-line:#8C6B1C;--ch-ink:#F4E2AE;--ch-strong:#F2C14E;--ch-item:#211B0C;}}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0E1412;--surface:#151D1A;--surface-2:#1B2521;--ink:#E3EBE7;--muted:#93A29C;--line:#2A3631;--line-2:#222D29;
+  --accent:#62B4A2;--accent-ink:#08110E;--accent-soft:#1D3530;
+  --hi:#FF8C7C;--hi-bg:#3A1C18;--lo:#8DBBF2;--lo-bg:#152539;--warn-bg:#352C12;--warn-ink:#F1D98A;
+  --ch-bg:#2A220E;--ch-line:#8C6B1C;--ch-ink:#F4E2AE;--ch-strong:#F2C14E;--ch-item:#211B0C;}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:100%}
+
+/* Sidebar */
+.side{background:var(--surface);border-right:1px solid var(--line);padding-block:18px;padding-inline:14px;display:flex;flex-direction:column;gap:14px;position:sticky;top:env(safe-area-inset-top,0px);height:100vh;overflow:auto}
+.brand{display:flex;align-items:baseline;justify-content:space-between;gap:8px;padding-inline:4px}
+.brand h1{font-size:16px;font-weight:600;margin:0;letter-spacing:-.01em}
+.brand span{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:7px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:500}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.small{padding:4px 9px;font-size:13px}
+.btn.danger{color:var(--hi);border-color:var(--hi)}
+.btn.danger.armed{background:var(--hi);color:var(--surface)}
+.plist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.plist button{width:100%;text-align:left;border:0;background:none;border-radius:6px;padding:8px 10px;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 8px}
+.plist button:hover{background:var(--surface-2)}
+.plist button[aria-current="true"]{background:var(--accent-soft)}
+.plist .nm{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plist .sub{grid-column:1/-1;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.badge{font-family:var(--mono);font-size:11px;padding:1px 6px;border-radius:10px;background:var(--hi-bg);color:var(--hi);align-self:center}
+.status{margin-top:auto;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;padding-inline:4px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--muted);flex:none}
+.status.ok .dot{background:var(--accent)}
+.status.busy .dot{background:#C08A00}
+.status.local .dot{background:#C08A00}
+
+/* Main */
+.main{padding-block:22px 60px;padding-inline:28px;min-width:0;display:flex;flex-direction:column;gap:16px}
+.banner{background:var(--warn-bg);color:var(--warn-ink);border-radius:8px;padding:10px 14px;font-size:13px}
+.phead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 20px}
+.phead h2{margin:0;font-size:24px;font-weight:600;letter-spacing:-.015em;text-wrap:balance}
+.meta{font-family:var(--mono);font-size:12.5px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:4px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.toolbar label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.toolbar input[type=datetime-local]{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:6px 8px;font-family:var(--mono);font-size:13px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+details.card>summary{list-style:none;cursor:pointer;padding:12px 16px;display:flex;align-items:center;gap:10px;font-weight:600}
+details.card>summary::-webkit-details-marker{display:none}
+.chev{width:14px;height:14px;flex:none;transition:transform .15s;color:var(--muted)}
+details[open]>summary .chev{transform:rotate(90deg)}
+.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px 16px;padding:4px 16px 16px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field span{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.field input,.field select{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:7px 9px;min-width:0}
+.hint{padding:0 16px 14px;font-size:12.5px;color:var(--muted)}
+
+.sectlabel{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:8px 0 -6px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.linkbtn{border:0;background:none;color:var(--accent);cursor:pointer;font-size:12.5px;padding:2px 4px;text-transform:none;letter-spacing:0}
+.panel summary .sys{font-weight:400;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.panel summary .flags{margin-left:auto;display:flex;gap:6px}
+.chip{font-family:var(--mono);font-size:11px;padding:1px 7px;border-radius:10px;font-weight:500}
+.chip.hi{background:var(--hi-bg);color:var(--hi)}
+.chip.lo{background:var(--lo-bg);color:var(--lo)}
+.twrap{overflow-x:auto;border-top:1px solid var(--line)}
+table{border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums;min-width:100%}
+th,td{border-bottom:1px solid var(--line-2);padding:0;text-align:left;vertical-align:middle}
+thead th{font-size:11.5px;color:var(--muted);font-weight:500;padding:8px 10px;background:var(--surface-2);white-space:nowrap}
+.c-test{position:sticky;left:0;z-index:1;background:var(--surface);min-width:150px;max-width:190px;padding:6px 10px;font-weight:500;border-right:1px solid var(--line)}
+thead .c-test{background:var(--surface-2);z-index:2}
+.c-u,.c-r{padding:6px 10px;font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.c-sp{padding:4px 10px}
+.c-sp svg{display:block}
+.colh{min-width:92px;position:relative;font-family:var(--mono)}
+.colh .d{color:var(--ink);font-weight:500}
+.colh .x{position:absolute;top:4px;right:4px;border:0;background:none;color:var(--muted);cursor:pointer;font-size:12px;padding:1px 4px;border-radius:4px;opacity:.5}
+.colh:hover .x,.colh .x:focus-visible,.colh .x.armed{opacity:1}
+.colh .x.armed{background:var(--hi);color:var(--surface);font-family:var(--sans)}
+td.v{position:relative;border-left:1px solid var(--line-2)}
+td.v input{width:100%;min-width:92px;border:0;background:transparent;padding:8px 22px 8px 10px;font-family:var(--mono);font-size:13.5px}
+td.v input:focus{outline:2px solid var(--accent);outline-offset:-2px;background:var(--surface)}
+td.v.hi{background:var(--hi-bg)} td.v.hi input{color:var(--hi);font-weight:500}
+td.v.lo{background:var(--lo-bg)} td.v.lo input{color:var(--lo);font-weight:500}
+td.v.hi::after,td.v.lo::after{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-size:12px;font-weight:600;pointer-events:none}
+td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color:var(--lo)}
+.rmrow{border:0;background:none;color:var(--muted);cursor:pointer;margin-left:4px;font-size:12px}
+.empty{padding:14px 16px;color:var(--muted);font-size:13px}
+.addtest{display:flex;flex-wrap:wrap;gap:8px;padding:10px 12px;border-top:1px solid var(--line-2)}
+.addtest input{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:5px 8px;min-width:0;width:170px}
+.addtest input.u{width:90px}
+
+.notes{display:flex;flex-direction:column;gap:0;padding:0 16px 14px}
+.note{display:grid;grid-template-columns:130px 1fr auto;gap:10px;padding:8px 0;border-bottom:1px solid var(--line-2);align-items:start}
+.note time{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:1px}
+.note p{margin:0;white-space:pre-wrap;max-width:70ch}
+.noteform{display:flex;gap:8px;padding:10px 16px 16px;flex-wrap:wrap}
+.noteform textarea{flex:1 1 260px;border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:8px 10px;min-height:42px;resize:vertical}
+.foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;align-items:center;color:var(--muted);font-size:12.5px;margin-top:6px}
+.welcome{max-width:560px;padding:40px 0}
+.welcome h2{font-size:22px;margin:0 0 8px}
+.welcome p{color:var(--muted);margin:0 0 16px}
+
+.colh .d.eb{border:0;background:none;padding:0;cursor:pointer;font:inherit;font-weight:500;color:var(--ink);text-decoration:underline dotted;text-underline-offset:3px}
+.notmeas{font-size:12.5px;color:var(--muted);padding:8px 12px;border-top:1px solid var(--line-2)}
+.nodata{color:var(--muted);font-size:13px;margin:0}
+.scrim{position:fixed;inset:0;background:rgba(8,14,12,.4);z-index:40}
+.sheet{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:var(--bg);z-index:41;display:flex;flex-direction:column;box-shadow:-12px 0 32px rgba(0,0,0,.2);padding-top:env(safe-area-inset-top,0px);margin:0}
+.sheet header{display:flex;align-items:center;gap:10px;padding:14px 18px;background:var(--surface);border-bottom:1px solid var(--line)}
+.sheet header h2{margin:0;font-size:17px;flex:1}
+.sbody{flex:1;overflow:auto;padding:14px 18px;display:flex;flex-direction:column;gap:12px}
+.sbody .field input{background:var(--surface)}
+.ptabs{display:flex;gap:6px;flex-wrap:wrap}
+.ptabs button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 11px;cursor:pointer;font-size:13px;font-weight:500;display:inline-flex;gap:6px;align-items:center}
+.ptabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.ptabs .n{font-family:var(--mono);font-size:11px;background:var(--accent-soft);color:var(--ink);border-radius:999px;padding:0 6px}
+.ptabs button[aria-selected="true"] .n{background:var(--accent-ink);color:var(--accent)}
+.erows{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.erow{display:grid;grid-template-columns:1fr 120px;gap:10px;align-items:center;padding:7px 10px 7px 14px;border-top:1px solid var(--line-2)}
+.erow:first-child{border-top:0}
+.erow label{display:flex;flex-direction:column;font-weight:500}
+.erow label small{font-family:var(--mono);font-size:11.5px;color:var(--muted);font-weight:400}
+.erow input{height:40px;border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:0 10px;font-family:var(--mono);font-size:15px;text-align:right;width:100%}
+.erow input.hi{border-color:var(--hi);color:var(--hi);background:var(--hi-bg);font-weight:500}
+.erow input.lo{border-color:var(--lo);color:var(--lo);background:var(--lo-bg);font-weight:500}
+.sfoot{display:flex;gap:8px;align-items:center;padding:12px 18px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line)}
+.sfoot .grow{margin-right:auto}
+.shint{font-size:12.5px;color:var(--muted);margin:0}
+.shint.ferr{color:var(--hi)}
+.fields2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sbody .field textarea,.sbody .field select{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:7px 9px;min-width:0;font:inherit;resize:vertical}
+.rep summary .sys{font-weight:400;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.rep summary .flags{margin-left:auto;display:flex;gap:6px}
+.chase{background:var(--ch-bg);border:1.5px solid var(--ch-line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;color:var(--ch-ink)}
+.chead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.chead h3{margin:0;font-size:17px;font-weight:700;letter-spacing:-.01em;color:var(--ch-strong)}
+.chead .ccount{font-family:var(--mono);font-size:12px}
+.chead .cover{font-family:var(--mono);font-size:11.5px;background:var(--hi);color:#fff;border-radius:10px;padding:1px 8px}
+.chead .cpt{margin-left:auto}
+.clist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.citem{display:grid;grid-template-columns:24px auto 1fr auto auto;gap:10px;align-items:center;background:var(--ch-item);border:1px solid color-mix(in srgb,var(--ch-line) 55%,transparent);border-radius:8px;padding:8px 10px}
+.citem.over{border-color:var(--hi)}
+.citem.auto{border-style:dashed}
+.cbox{width:22px;height:22px;border-radius:6px;border:2px solid var(--ch-strong);background:transparent;cursor:pointer;padding:0;color:var(--ch-strong);font-weight:700;line-height:1}
+.cbox:hover{background:color-mix(in srgb,var(--ch-strong) 18%,transparent)}
+.cbox.dash{border-style:dashed;cursor:default;background:none}
+.cbox.on{background:var(--ch-strong);color:var(--ch-bg)}
+.ccat{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--ch-strong);white-space:nowrap}
+.ctext{min-width:0;color:var(--ink)}
+.ctext em{font-style:normal;color:var(--muted);font-size:12.5px;margin-left:6px}
+.cdue{font-family:var(--mono);font-size:12px;white-space:nowrap;color:var(--ch-ink)}
+.citem.over .cdue{color:var(--hi);font-weight:600}
+.cdue.today{font-weight:600}
+.citem .linkbtn{color:var(--ch-strong);font-weight:600}
+.cnone{margin:0;font-size:13px}
+.cadd{display:grid;grid-template-columns:auto 1fr auto auto;gap:8px}
+.cadd select,.cadd input{border:1px solid var(--ch-line);background:var(--ch-item);border-radius:7px;padding:7px 9px;min-width:0;color:var(--ink)}
+.cdone summary{cursor:pointer;font-size:13px;color:var(--ch-strong)}
+.cdone .clist{margin-top:6px}
+.citem.done .ctext{text-decoration:line-through;color:var(--muted)}
+.chasebtn{background:var(--ch-bg);border-color:var(--ch-line);color:var(--ch-strong);font-weight:600;justify-content:space-between}
+.chasebtn[aria-current="true"]{outline:2px solid var(--ch-line)}
+.chasebtn .n{font-family:var(--mono);background:var(--ch-strong);color:var(--ch-bg);border-radius:10px;padding:0 7px;font-size:12px}
+.badge.ch{background:var(--ch-bg);color:var(--ch-strong);border:1px solid var(--ch-line)}
+.plist .bdg{display:flex;gap:4px;align-self:center}
+.cgroup{display:flex;flex-direction:column;gap:6px}
+.cgroup h4{margin:6px 0 0;font-size:14px}
+.cgroup h4 button{border:0;background:none;padding:0;cursor:pointer;color:var(--ink);font:inherit;font-weight:700;text-decoration:underline;text-decoration-color:var(--ch-line);text-underline-offset:3px}
+@media (max-width:620px){.cadd{grid-template-columns:1fr 1fr}.cadd #c_text{grid-column:1/-1;order:-1}.cadd button{grid-column:1/-1}.citem{grid-template-columns:24px 1fr auto;row-gap:4px}.citem>.cbox{grid-column:1;grid-row:1/3;align-self:start}.citem>.ctext{grid-column:2;grid-row:1}.citem>:last-child{grid-column:3;grid-row:1;align-self:start}.citem>.ccat{grid-column:2;grid-row:2}.citem>.cdue{grid-column:3;grid-row:2;text-align:right}}
+.stabs{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--surface-2);border-radius:8px;padding:3px}
+.stabs button{border:0;background:none;border-radius:6px;padding:6px 4px;cursor:pointer;font-size:12.5px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:0;line-height:1.25}
+.stabs button span{font-family:var(--mono);font-size:11.5px}
+.stabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.pempty{font-size:12.5px;color:var(--muted);padding:8px 10px}
+.sbanner{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;border-radius:10px;padding:10px 14px;font-size:13.5px}
+.sbanner.dis{background:var(--lo-bg);color:var(--ink)}
+.sbanner.dis b{color:var(--lo)}
+.sbanner.dec{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+.stact{display:flex;gap:8px;flex-wrap:wrap}
+.stconf{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:10px;max-width:640px;margin-left:auto}
+.stconf h4{margin:0;font-size:15px}
+.stconf .field input{background:var(--bg)}
+.stwarn{background:var(--ch-bg);border:1px solid var(--ch-line);color:var(--ch-ink);border-radius:8px;padding:10px 12px;font-size:13px}
+.stwarn ul{margin:6px 0 0;padding-left:18px}
+.stbtns{display:flex;gap:8px;justify-content:flex-end}
+@media (max-width:760px){.stabs{min-width:0}}
+.chip.pendc{background:var(--warn-bg);color:var(--warn-ink)}
+.chip.cntc{background:var(--surface-2);color:var(--muted)}
+.replist{display:flex;flex-direction:column;border-top:1px solid var(--line)}
+.rentry{padding:12px 16px;border-bottom:1px solid var(--line-2);display:flex;flex-direction:column;gap:6px}
+.rhead{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.rhead time{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.rtitle{flex:1;min-width:180px}
+.stp{font-size:11.5px;font-weight:500;border-radius:10px;padding:1px 8px;white-space:nowrap}
+.stp.ok{background:var(--accent-soft);color:var(--accent)}
+.stp.pend{background:var(--warn-bg);color:var(--warn-ink)}
+.stp.prelim{background:var(--lo-bg);color:var(--lo)}
+.mod{font-family:var(--mono);font-size:11.5px;background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:0 6px}
+.org{margin:0;font-weight:600;max-width:75ch}
+.res{margin:0;white-space:pre-wrap;max-width:75ch;color:var(--ink)}
+.full summary{cursor:pointer;color:var(--accent);font-size:13px}
+.full .res{margin-top:6px}
+.sensrow{display:flex;flex-wrap:wrap;gap:5px}
+.sens{font-size:12px;border-radius:6px;padding:2px 8px;border:1px solid var(--line)}
+.sens b{font-family:var(--mono)}
+.sens.S{background:var(--accent-soft);border-color:transparent}.sens.S b{color:var(--accent)}
+.sens.I{background:var(--warn-bg);border-color:transparent;color:var(--warn-ink)}
+.sens.R{background:var(--hi-bg);border-color:transparent;color:var(--hi)}
+.repadd{padding:10px 16px 14px}
+.files{display:flex;flex-wrap:wrap;gap:8px}
+.fitem{position:relative;display:flex;align-items:center}
+.fitem.busy,.fitem.pdf{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13px;background:var(--surface)}
+.fitem.pdf a{color:var(--accent);font-weight:500}
+.fitem.busy{color:var(--muted)}
+.thumb{border:1px solid var(--line);border-radius:8px;padding:0;background:#000;cursor:zoom-in;overflow:hidden;width:120px;height:90px;display:block}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.frm{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-size:11px;line-height:1;color:var(--muted)}
+.fitem.pdf .frm{position:static;margin-left:8px}
+.chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--ink)}
+.chk input{margin-top:3px}
+.upl{align-self:flex-start;position:relative;overflow:hidden}
+.upl input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upl[aria-disabled="true"]{opacity:.5;pointer-events:none}
+.senslist{display:flex;flex-direction:column;gap:6px}
+.srow{display:grid;grid-template-columns:1fr auto 26px;gap:8px;align-items:center;position:relative}
+.srow input{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:6px 9px;min-width:0}
+.srow .frm{position:static}
+.sir{display:inline-flex;border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.sir button{border:0;background:var(--surface);padding:5px 11px;cursor:pointer;font-family:var(--mono);font-weight:600;color:var(--muted)}
+.sir button+button{border-left:1px solid var(--line)}
+.sir button.S.on{background:var(--accent);color:var(--accent-ink)}
+.sir button.I.on{background:#C08A00;color:#fff}
+.sir button.R.on{background:var(--hi);color:#fff}
+.sensbar{display:flex;gap:8px}
+.sensp summary{cursor:pointer;color:var(--accent);font-size:13px}
+.sensp textarea{width:100%;margin:6px 0;border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:7px 9px;font-family:var(--mono);font-size:13px}
+.lbox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;cursor:zoom-out}
+.lbox img{max-width:100%;max-height:calc(100% - 60px);object-fit:contain;background:#000}
+@media (max-width:520px){.fields2{grid-template-columns:1fr}}
+.pastebox{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;min-height:220px;font-family:var(--mono);font-size:13px;resize:vertical;width:100%}
+.readnote{background:var(--accent-soft);border-radius:8px;padding:10px 12px;font-size:13px;display:flex;flex-direction:column;gap:4px}
+.readnote.warn{background:var(--warn-bg);color:var(--warn-ink)}
+.readnote b{font-weight:600}
+@media (max-width:760px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding-inline:16px;padding-block:14px;gap:10px}
+  .plist{flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:2px}
+  .plist li{flex:none}
+  .plist button{width:auto;min-width:150px;border:1px solid var(--line)}
+  .status{margin-top:0}
+  .main{padding-inline:16px;padding-block:16px 48px}
+  .phead h2{font-size:20px}
+  .note{grid-template-columns:1fr auto}
+  .note time{grid-column:1/-1}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="side">
+    <div class="brand"><h1>Ward Bloods</h1><span id="pcount"></span></div>
+    <button class="btn primary" id="addPatient" type="button">+ Add patient</button>
+    <button class="btn chasebtn" id="chaseAll" type="button" aria-current="false"><span>Ward chase list</span><span class="n" id="chaseN">0</span></button>
+    <div class="stabs" id="stabs" role="tablist" aria-label="Patient lists"></div>
+    <ul class="plist" id="plist"></ul>
+    <div class="status" id="status"><span class="dot"></span><span id="statusText">Loading…</span><button class="linkbtn" type="button" id="signOut" hidden style="margin-left:auto">Sign out</button></div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+
+<script src="config.js"></script>
+<script>
+(function(){
+"use strict";
+/* ---------- Test catalogue, grouped by system ---------- */
+const PANELS=[
+ /* lab:true = range taken from your lab's reports; others are typical adult values (marked *) */
+ {key:"fbc",name:"FBC",sys:"Haematology",core:true,tests:[
+  {k:"wcc",n:"WBC",u:"K/uL",r:[4,11],lab:1},
+  {k:"rbc",n:"RBC",u:"M/uL",m:[4.5,6.5],f:[3.8,5.8],lab:1},
+  {k:"hb",n:"Hb",u:"g/dL",m:[13,18],f:[11.5,16.5],lab:1},
+  {k:"hct",n:"Hct",u:"%",m:[40,54],f:[37,47],lab:1},
+  {k:"mcv",n:"MCV",u:"fL",r:[76,96],lab:1},
+  {k:"mch",n:"MCH",u:"pg",r:[27,32],lab:1},
+  {k:"mchc",n:"MCHC",u:"g/dL",r:[30,35],lab:1},
+  {k:"rdw",n:"RDW-CV",u:"%",r:[11.5,14.5],lab:1},
+  {k:"rdwsd",n:"RDW-SD",u:"fL",r:[35.1,46.3],lab:1},
+  {k:"mpv",n:"MPV",u:"fL",r:[9,13],lab:1},
+  {k:"plt",n:"Platelets",u:"K/uL",r:[150,450],lab:1},
+  {k:"neutp",n:"Neutrophils %",u:"%",r:[37,92],lab:1},
+  {k:"neut",n:"Neutrophils #",u:"K/uL",r:[2,7.8],lab:1},
+  {k:"lymphp",n:"Lymphocytes %",u:"%",r:[10,58.5],lab:1},
+  {k:"lymph",n:"Lymphocytes #",u:"K/uL",r:[0.6,4.1],lab:1},
+  {k:"monop",n:"Monocytes %",u:"%",r:[0,12],lab:1},
+  {k:"mono",n:"Monocytes #",u:"K/uL",r:[0,0.9],lab:1},
+  {k:"eosp",n:"Eosinophils %",u:"%",r:[0,7],lab:1},
+  {k:"eos",n:"Eosinophils #",u:"K/uL",r:[0,0.7],lab:1},
+  {k:"basop",n:"Basophils %",u:"%",r:[0,2],lab:1},
+  {k:"baso",n:"Basophils #",u:"K/uL",r:[0,0.2],lab:1},
+  {k:"retic",n:"Reticulocytes",u:"%",r:[0.5,2.5]}]},
+ {key:"ue",name:"U&E",sys:"Renal",core:true,tests:[
+  {k:"na",n:"Na⁺",u:"mmol/L",r:[134,144],lab:1},
+  {k:"k",n:"K⁺",u:"mmol/L",r:[2.8,4.1],lab:1},
+  {k:"cl",n:"Cl⁻",u:"mmol/L",r:[94,104],lab:1},
+  {k:"hco3",n:"CO₂ (HCO₃⁻)",u:"mmol/L",r:[22,29],lab:1},
+  {k:"ag",n:"Anion gap",u:"mmol/L",r:[4,16],lab:1},
+  {k:"urea",n:"BUN (urea)",u:"mmol/L",r:[2.6,6.5],lab:1},
+  {k:"cr",n:"Creatinine",u:"µmol/L",r:[46,87],lab:1},
+  {k:"egfr",n:"eGFR",u:"mL/min/1.73m²",r:[90,null]}]},
+ {key:"lft",name:"LFT",sys:"Hepatobiliary",core:true,tests:[
+  {k:"bili",n:"Total bilirubin",u:"µmol/L",r:[3,22],lab:1},
+  {k:"dbili",n:"Direct bilirubin",u:"µmol/L",r:[null,5]},
+  {k:"ast",n:"AST (SGOT)",u:"U/L",r:[10,42],lab:1},
+  {k:"alt",n:"ALT (SGPT)",u:"IU/L",r:[3,35],lab:1},
+  {k:"alp",n:"ALP",u:"IU/L",r:[39,106],lab:1},
+  {k:"ggt",n:"GGT",u:"IU/L",r:[2,38],lab:1},
+  {k:"alb",n:"Albumin",u:"g/L",r:[39,49],lab:1},
+  {k:"tp",n:"Total protein",u:"g/L",r:[60,80]},
+  {k:"amy",n:"Amylase / Lipase",u:"U/L",note:"lab-specific"}]},
+ {key:"bone",name:"Bone profile & Mg",sys:"Musculoskeletal",core:true,tests:[
+  {k:"ca",n:"Calcium (corrected)",u:"mmol/L",r:[2.15,2.51],lab:1},
+  {k:"po4",n:"Phosphorus",u:"mmol/L",r:[0.73,1.43],lab:1},
+  {k:"mg",n:"Magnesium",u:"mmol/L",r:[0.69,0.91],lab:1}]},
+ {key:"inf",name:"Inflammatory markers",sys:"Immune / Infection",core:true,tests:[
+  {k:"crp",n:"CRP",u:"mg/L",r:[null,5]},
+  {k:"esr",n:"ESR",u:"mm/h",m:[null,15],f:[null,20]},
+  {k:"pct",n:"Procalcitonin",u:"ng/mL",r:[null,0.5]},
+  {k:"lac",n:"Lactate",u:"mmol/L",r:[0.5,2.0]}]},
+ {key:"coag",name:"Coagulation",sys:"Haematology",core:true,tests:[
+  {k:"pt",n:"PT (Protime)",u:"sec",r:[10.9,13.0],lab:1},
+  {k:"inr",n:"INR",u:"ratio",r:[0.8,1.2],lbl:"target per indication"},
+  {k:"aptt",n:"PTT",u:"sec",r:[23,39],lab:1},
+  {k:"fib",n:"Fibrinogen",u:"g/L",r:[2,4]},
+  {k:"ddim",n:"D-dimer",u:"ng/mL FEU",r:[null,500]}]},
+ {key:"endo",name:"Endocrine & lipids",sys:"Endocrine / Metabolic",core:false,tests:[
+  {k:"glu",n:"Fasting glucose",u:"mmol/L",r:[3.5,6.1],lab:1},
+  {k:"rbs",n:"Random glucose",u:"mmol/L",r:[3.9,7.8]},
+  {k:"a1c",n:"HbA1c",u:"%",r:[null,5.7]},
+  {k:"tsh",n:"TSH",u:"uIU/mL",r:[0.4,4.0],lab:1},
+  {k:"ft4",n:"Free T4",u:"pmol/L",r:[11.5,22.7],lab:1},
+  {k:"tc",n:"Cholesterol",u:"mmol/L",r:[2.28,5.20],lab:1},
+  {k:"hdl",n:"HDL cholesterol",u:"mmol/L",r:[0.78,1.61],lab:1},
+  {k:"tg",n:"Triglycerides",u:"mmol/L",r:[0.63,3.35],lab:1},
+  {k:"ldl",n:"LDL (direct)",u:"mmol/L",r:[2.25,3.37],lab:1}]},
+ {key:"card",name:"Cardiac",sys:"Cardiovascular",core:false,tests:[
+  {k:"trop",n:"Troponin-HSXT",u:"ng/mL",r:[null,0.0099],lab:1,lbl:"<0.005 low · 0.005–0.010 intermediate · ≥0.010 high"},
+  {k:"ck",n:"CK",u:"IU/L",r:[64,644],lab:1},
+  {k:"ckmb",n:"CK-MB",u:"IU/L",r:[7,60],lab:1},
+  {k:"bnp",n:"BNP",u:"pg/mL",r:[null,100]},
+  {k:"ntbnp",n:"NT-proBNP",u:"pg/mL",r:[null,125]}]},
+ {key:"haem",name:"Haematinics",sys:"Haematology",core:false,tests:[
+  {k:"ferr",n:"Ferritin",u:"µg/L",m:[30,400],f:[15,150]},
+  {k:"fe",n:"Iron",u:"µmol/L",r:[10,30]},
+  {k:"tibc",n:"TIBC",u:"µmol/L",r:[45,72]},
+  {k:"b12",n:"B12",u:"ng/L",r:[200,900]},
+  {k:"fol",n:"Folate",u:"µg/L",r:[3,null]}]},
+ {key:"abg",name:"ABG / VBG",sys:"Respiratory / Acid–base",core:false,tests:[
+  {k:"ph",n:"pH",u:"",r:[7.35,7.45]},
+  {k:"po2",n:"pO₂",u:"kPa",r:[10,13]},
+  {k:"pco2",n:"pCO₂",u:"kPa",r:[4.7,6.0]},
+  {k:"bhco3",n:"HCO₃⁻ (gas)",u:"mmol/L",r:[22,26]},
+  {k:"be",n:"Base excess",u:"mmol/L",r:[-2,2]},
+  {k:"fio2",n:"FiO₂",u:"%",note:"record"}]}
+];
+
+/* ---------- Helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)).replace(/[^A-Za-z0-9-]/g,"");
+const pad=n=>String(n).padStart(2,"0");
+const nowLocal=()=>{const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes());};
+const MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function fmtDT(dt){if(!dt)return{d:"—",t:""};const [a,b]=dt.split("T");const [y,m,d]=a.split("-");return{d:(+d)+" "+MON[+m-1],t:(b||"").slice(0,5),y};}
+function age(dob){if(!dob)return"";const b=new Date(dob);if(isNaN(b))return"";const n=new Date();let a=n.getFullYear()-b.getFullYear();if(n<new Date(n.getFullYear(),b.getMonth(),b.getDate()))a--;return a>=0?a+"y":"";}
+function rangeFor(t,sex){
+  if(t.m){if(sex==="M")return t.m;if(sex==="F")return t.f;
+    const lo=[t.m[0],t.f[0]].filter(x=>x!=null),hi=[t.m[1],t.f[1]].filter(x=>x!=null);
+    return[lo.length?Math.min(...lo):null,hi.length?Math.max(...hi):null];}
+  return t.r||null;}
+function fmtNum(x){return String(x);}
+function rangeLabel(t){
+  if(t.lbl)return t.lbl;
+  const one=r=>r[0]!=null&&r[1]!=null?fmtNum(r[0])+"–"+fmtNum(r[1]):r[0]!=null?"≥"+fmtNum(r[0]):"<"+fmtNum(r[1]);
+  const star=t.lab?"":" *";
+  if(t.m)return"M "+one(t.m)+" · F "+one(t.f)+star;
+  if(t.r)return one(t.r)+star;
+  return t.note||"—";}
+function num(v){if(v==null)return NaN;const s=String(v).trim().replace(",",".").replace(/^[<>≤≥]=?\s*/,"");return s===""?NaN:parseFloat(s);}
+function flag(v,r){const x=num(v);if(isNaN(x)||!r)return"";if(r[0]!=null&&x<r[0])return"lo";if(r[1]!=null&&x>r[1])return"hi";return"";}
+function sortedCols(p){return[...(p.cols||[])].sort((a,b)=>a.dt<b.dt?-1:a.dt>b.dt?1:0);}
+function blank(){return{name:"",age:"",sex:"",ward:"",consultant:"",admitted:"",dx:"",cols:[],v:{},custom:{},notes:[],micro:[],path:[],rad:[],chase:[],created:Date.now(),updated:Date.now()};}
+function allTests(p,panel){return[...panel.tests.map(t=>({...t,key:panel.key+"."+t.k})),...((p.custom&&p.custom[panel.key])||[]).map(c=>({k:c.k,n:c.n,u:c.u||"",note:"custom",key:c.k,custom:true}))];}
+function latestFlags(p,panel){
+  const cols=sortedCols(p);const out={hi:0,lo:0};if(!cols.length)return out;
+  for(const t of allTests(p,panel)){const row=(p.v||{})[t.key]||{};
+    for(let i=cols.length-1;i>=0;i--){const val=row[cols[i].id];if(val!=null&&String(val).trim()!==""){const f=flag(val,rangeFor(t,p.sex));if(f)out[f]++;break;}}}
+  return out;}
+
+/* ---------- Example patients (never saved) ---------- */
+function tAt(daysAgo,hh,mm){const x=new Date(Date.now()-daysAgo*864e5);return x.getFullYear()+"-"+pad(x.getMonth()+1)+"-"+pad(x.getDate())+"T"+pad(hh)+":"+pad(mm||0);}
+function fill(p,ids,rows){for(const [k,a] of Object.entries(rows)){p.v[k]={};a.forEach((x,i)=>{if(x!=null)p.v[k][ids[i]]=String(x);});}}
+function exampleCAP(){
+  const p=blank();Object.assign(p,{name:"Example 1 · CAP + AKI",age:"68",sex:"M",ward:"Male Medical · Bed 12",consultant:"Medicine A",dx:"Community-acquired pneumonia with AKI",created:1});
+  p.cols=[{id:"a1",dt:tAt(3,6)},{id:"a2",dt:tAt(2,6)},{id:"a3",dt:tAt(1,6)},{id:"a4",dt:tAt(0,6)}];
+  fill(p,["a1","a2","a3","a4"],{"fbc.hb":[13.8,13.1,12.6,12.4],"fbc.wcc":[16.2,14.8,12.1,9.6],"fbc.neut":[13.9,12.2,9.8,7.1],"fbc.plt":[210,198,205,232],
+    "ue.na":[133,134,136,138],"ue.k":[5.4,5.2,4.8,4.5],"ue.urea":[14.2,12.8,10.1,8.3],"ue.cr":[182,165,131,112],"ue.egfr":[33,37,49,59],
+    "lft.alb":[31,30,31,33],"lft.alt":[42,40,38],"inf.crp":[212,188,121,64],"inf.lac":[2.6,1.8,1.2]});
+  p.notes=[{id:"n1",dt:tAt(1,9),text:"Cr improving on IV fluids. Repeat U&E in AM. Reg informed."}];return p;}
+function exampleDKA(){
+  const p=blank();Object.assign(p,{name:"Example 2 · DKA",age:"24",sex:"F",ward:"Female Medical · Bed 3",consultant:"Medicine B",dx:"Diabetic ketoacidosis (T1DM)",created:2});
+  p.cols=[{id:"b1",dt:tAt(1,22)},{id:"b2",dt:tAt(0,2)},{id:"b3",dt:tAt(0,6)},{id:"b4",dt:tAt(0,10)}];
+  fill(p,["b1","b2","b3","b4"],{"endo.glu":[32.4,21.8,14.2,11.6],"abg.ph":[7.08,7.19,7.28,7.34],"abg.pco2":[2.9,3.4,4.1,4.5],"abg.bhco3":[8,12,17,20],"abg.be":[-21,-15,-9,-5],
+    "ue.na":[131,134,137,139],"ue.k":[5.8,4.6,3.8,3.4],"ue.cl":[96,101,106,108],"ue.hco3":[8,12,17,20],"ue.ag":[27,21,14,11],"ue.urea":[9.1,8.2,6.9,5.8],"ue.cr":[118,104,88,76],
+    "fbc.wcc":[18.4,14.2,11.0],"inf.lac":[2.4,1.6,1.1],"bone.mg":[0.72,0.68,0.66],"bone.po4":[1.4,0.9,0.7]});
+  p.notes=[{id:"n2",dt:tAt(0,10),text:"FRIII running. K⁺ 3.4, KCl added to fluids. Repeat VBG in 2h. Diabetes team aware."}];return p;}
+function exampleChol(){
+  const p=blank();Object.assign(p,{name:"Example 3 · Cholangitis",age:"71",sex:"M",ward:"Surgical · Bed 7",consultant:"Surgery A",dx:"Ascending cholangitis, CBD stone",created:3});
+  p.cols=[{id:"c1",dt:tAt(2,7)},{id:"c2",dt:tAt(1,7)},{id:"c3",dt:tAt(0,7)}];
+  fill(p,["c1","c2","c3"],{"lft.bili":[88,104,71],"lft.dbili":[62,78,49],"lft.alp":[412,455,380],"lft.ggt":[390,420,350],"lft.alt":[164,142,98],"lft.ast":[120,96,70],"lft.alb":[32,30,31],
+    "fbc.wcc":[19.8,16.1,12.4],"fbc.neut":[17.2,13.8,10.1],"fbc.plt":[132,121,140],"fbc.hb":[13.4,12.9,13.0],
+    "inf.crp":[246,198,132],"inf.pct":[6.2,3.1],"coag.pt":[16.8,15.9,13.8],"coag.inr":[1.5,1.4,1.2],"ue.urea":[9.4,8.0,6.6],"ue.cr":[128,110,96]});
+  p.notes=[{id:"n3",dt:tAt(1,12),text:"IV pip-taz day 2. Vit K given. ERCP booked for tomorrow."}];return p;}
+function makeExamples(){
+  const a=exampleCAP(),b=exampleDKA(),c=exampleChol();
+  a.micro=[{id:"m1",dt:tAt(3,5,30),specimen:"Blood culture (peripheral)",test:"Culture & sensitivity",status:"Final",organism:"Streptococcus pneumoniae",result:"Gram-positive cocci in chains in 1 of 2 bottles at 20h.",sens:[{abx:"Penicillin",r:"S"},{abx:"Ceftriaxone",r:"S"},{abx:"Erythromycin",r:"R"},{abx:"Levofloxacin",r:"S"}]},
+    {id:"m2",dt:tAt(3,8),specimen:"Sputum",test:"Culture & sensitivity",status:"Pending",organism:"",result:"Gram stain: moderate pus cells, Gram-positive diplococci.",sens:[]}];
+  a.rad=[{id:"r1",dt:tAt(3,4),modality:"X-ray",study:"CXR PA",status:"Reported",impression:"Right lower lobe consolidation. No pleural effusion.",report:"Airspace opacification in the right lower zone with air bronchograms, consistent with consolidation. Heart size normal. No effusion or pneumothorax.",files:[]}];
+  b.micro=[{id:"m3",dt:tAt(1,22),specimen:"Urine (MSU)",test:"Culture & sensitivity",status:"Final",organism:"",result:"No significant growth.",sens:[]}];
+  b.rad=[{id:"r2",dt:tAt(1,23),modality:"X-ray",study:"CXR AP (portable)",status:"Reported",impression:"No acute cardiopulmonary abnormality.",report:"",files:[]}];
+  c.micro=[{id:"m4",dt:tAt(2,6),specimen:"Blood culture (peripheral)",test:"Culture & sensitivity",status:"Final",organism:"Escherichia coli",result:"Gram-negative rods in 2 of 2 bottles at 14h. ESBL not detected.",sens:[{abx:"Ampicillin",r:"R"},{abx:"Co-amoxiclav",r:"I"},{abx:"Piperacillin-tazobactam",r:"S"},{abx:"Ceftriaxone",r:"S"},{abx:"Gentamicin",r:"S"},{abx:"Ciprofloxacin",r:"S"},{abx:"Meropenem",r:"S"},{abx:"Trimethoprim-sulfamethoxazole",r:"R"}]}];
+  c.path=[{id:"h1",dt:tAt(0,11),specimen:"Ampulla of Vater biopsy (at ERCP)",procedure:"Endoscopic biopsy",status:"Pending",diagnosis:"",report:"",files:[]}];
+  c.rad=[{id:"r3",dt:tAt(2,9),modality:"Ultrasound",study:"US abdomen (RUQ)",status:"Reported",impression:"Dilated CBD 11 mm with distal calculus. Gallbladder calculi, no cholecystitis.",report:"Gallbladder contains multiple calculi, wall 2 mm. CBD dilated to 11 mm with an echogenic shadowing focus distally. Intrahepatic ducts mildly dilated. Liver, pancreas and kidneys unremarkable.",files:[]},
+    {id:"r4",dt:tAt(1,15),modality:"MRI",study:"MRCP",status:"Done, awaiting report",impression:"",report:"",files:[]}];
+  a.chase=[{id:"c1",cat:"Culture / micro",text:"Pneumococcal and Legionella urinary antigens",due:tAt(0,14),done:false,created:tAt(2,9)},
+    {id:"c2",cat:"Bloods",text:"Repeat U&E tomorrow AM, confirm Cr still falling",due:tAt(-1,8),done:false,created:tAt(0,9)},
+    {id:"c3",cat:"Imaging",text:"CXR report from Sept 21",done:true,doneAt:tAt(2,12),created:tAt(3,6)}];
+  b.chase=[{id:"c4",cat:"Bloods",text:"Repeat VBG + K⁺ after KCl",due:tAt(0,12),done:false,created:tAt(0,10)},
+    {id:"c5",cat:"Referral / review",text:"Diabetes educator review before discharge",done:false,created:tAt(0,10)}];
+  c.chase=[{id:"c6",cat:"Procedure",text:"ERCP time from GI team",due:tAt(0,16),done:false,created:tAt(1,12)},
+    {id:"c7",cat:"Bloods",text:"INR after vitamin K",done:false,created:tAt(1,12)}];
+  return{"ex-1":a,"ex-2":b,"ex-3":c};}
+
+/* ---------- State ---------- */
+const S={tab:"active",view:"patient",patients:{},cur:null,mode:"loading",db:null,col:null,dirty:new Set(),timers:{},writing:{},again:{},examples:null,loaded:false,openPanels:{}};
+const LS_KEY="wardbloods.patients",LS_OPEN="wardbloods.open";
+function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||"null");}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
+S.openPanels=lsGet(LS_OPEN)||{};
+S.showAll=lsGet("wardbloods.showall")===true;
+
+function setStatus(kind,text){const el=$("#status");el.className="status "+kind;$("#statusText").textContent=text;}
+function refreshStatus(){
+  if(S.mode==="cloud")setStatus(S.dirty.size?"busy":"ok",S.dirty.size?"Saving…":"Saved to your account · private to you");
+  else if(S.mode==="supabase")setStatus(S.dirty.size?"busy":"ok",S.dirty.size?"Saving…":"Synced · "+SB.teamName);
+  else if(S.mode==="local")setStatus("local",S.dirty.size?"Saving…":"Saved on this device only");
+  else if(S.mode==="memory")setStatus("local","Not saved: storage unavailable");
+  else setStatus("busy","Loading…");}
+
+function ordered(){return Object.entries(S.patients).sort((a,b)=>(a[1].created||0)-(b[1].created||0));}
+const stOf=p=>(p&&p.status)||"active";
+function orderedBy(st){return ordered().filter(x=>stOf(x[1])===st);}
+const ST_LABEL={active:"Active",discharged:"Discharged",deceased:"Deceased"};
+const isEx=id=>typeof id==="string"&&id.startsWith("ex-");
+function current(){if(isEx(S.cur))return S.examples?S.examples[S.cur]:null;return S.patients[S.cur]||null;}
+function showExamples(){S.examples=makeExamples();S.cur="ex-1";}
+
+/* ---------- Saving ---------- */
+function touch(id){
+  if(isEx(id))return;
+  const p=S.patients[id];if(!p)return;p.updated=Date.now();
+  S.dirty.add(id);refreshStatus();
+  clearTimeout(S.timers[id]);S.timers[id]=setTimeout(()=>flush(id),650);}
+async function flush(id){
+  if(S.mode==="supabase")return sbFlush(id);
+  if(S.mode==="local"||S.mode==="memory"){lsSet(LS_KEY,S.patients);S.dirty.delete(id);refreshStatus();renderSidebar();return;}
+  if(S.writing[id]){S.again[id]=true;return;}
+  const p=S.patients[id];if(!p){S.dirty.delete(id);refreshStatus();return;}
+  S.writing[id]=true;
+  try{await S.col.doc(id).set(JSON.parse(JSON.stringify(p)));}
+  catch(e){console.warn(e);S.writing[id]=false;
+    if(e&&e.code==="unavailable"){setTimeout(()=>flush(id),800+Math.random()*800);return;}
+    setStatus("local","Couldn't save: "+(e&&e.code==="quota_exceeded"?"storage full":"check connection"));return;}
+  S.writing[id]=false;
+  if(S.again[id]){S.again[id]=false;return flush(id);}
+  S.dirty.delete(id);refreshStatus();renderSidebar();}
+async function removePatient(id){
+  const p0=S.patients[id];delete S.patients[id];S.dirty.delete(id);clearTimeout(S.timers[id]);
+  if(S.mode==="supabase"){await sbDelete(id,p0);}
+  else if(S.mode==="cloud"){try{await S.col.doc(id).delete();}catch(e){console.warn(e);}}
+  else lsSet(LS_KEY,S.patients);
+  const list=orderedBy(S.tab);if(list.length)S.cur=list[list.length-1][0];else if(!ordered().length){S.tab="active";showExamples();}else S.cur=null;
+  renderAll();}
+
+/* ---------- Sidebar ---------- */
+function renderSidebar(){
+  {let n=0;const all=ordered().length?ordered().map(x=>x[1]).filter(p=>stOf(p)!=="deceased"):Object.values(S.examples||{});all.forEach(p=>n+=chaseCount(p));
+   const cn=document.getElementById("chaseN");if(cn)cn.textContent=n;const cb=document.getElementById("chaseAll");if(cb)cb.setAttribute("aria-current",String(S.view==="chase"));}
+  const list=orderedBy(S.tab);const nAct=orderedBy("active").length;
+  $("#pcount").textContent=nAct?nAct+(nAct===1?" active":" active"):"";
+  $("#stabs").innerHTML=["active","discharged","deceased"].map(t=>{const n=t==="active"&&!ordered().length&&S.examples?Object.keys(S.examples).length:orderedBy(t).length;
+    return`<button type="button" role="tab" data-stab="${t}" aria-selected="${S.tab===t}">${ST_LABEL[t]} <span>${n}</span></button>`;}).join("");
+  let h="";
+  if(S.tab==="active"&&!ordered().length&&S.examples)for(const [id,p] of Object.entries(S.examples))h+=item(id,p,true);
+  for(const [id,p] of list)h+=item(id,p,false);
+  if(!h)h=`<li class="pempty">${S.tab==="discharged"?"No discharged patients. They move here with all their results when you discharge them.":S.tab==="deceased"?"No deceased patients.":"No active patients."}</li>`;
+  $("#plist").innerHTML=h;}
+function item(id,p,isEx){
+  let hi=0,lo=0;for(const pn of PANELS){const f=latestFlags(p,pn);hi+=f.hi;lo+=f.lo;}
+  const cols=sortedCols(p);const last=cols.length?fmtDT(cols[cols.length-1].dt):null;
+  const st=stOf(p);const sd=st==="discharged"&&p.dischargedAt?"discharged "+fmtDT(p.dischargedAt).d:st==="deceased"&&p.diedAt?"died "+fmtDT(p.diedAt).d:"";
+  const sub=[p.ward,sd||(last?"last "+last.d:"no samples")].filter(Boolean).join(" · ");
+  const cn=chaseCount(p);
+  return `<li><button type="button" data-p="${esc(id)}" aria-current="${S.view!=="chase"&&S.cur===id}"><span class="nm">${esc(p.name||"Unnamed patient")}</span><span class="bdg">${cn?`<span class="badge ch" title="Items to chase">${cn}</span>`:""}${hi+lo?`<span class="badge" title="Abnormal on latest sample">${hi+lo}</span>`:""}</span><span class="sub">${esc(sub)}</span></button></li>`;}
+
+/* ---------- Sparkline ---------- */
+function spark(p,t){
+  const cols=sortedCols(p);const row=(p.v||{})[t.key]||{};const r=rangeFor(t,p.sex);
+  const pts=[];cols.forEach((c,i)=>{const x=num(row[c.id]);if(!isNaN(x))pts.push({i,x,f:flag(row[c.id],r)});});
+  const W=76,H=24,P=3;
+  if(!pts.length)return`<svg width="${W}" height="${H}" aria-hidden="true"></svg>`;
+  let mn=Math.min(...pts.map(q=>q.x)),mx=Math.max(...pts.map(q=>q.x));
+  if(r){if(r[0]!=null)mn=Math.min(mn,r[0]);if(r[1]!=null)mx=Math.max(mx,r[1]);}
+  if(mx===mn){mx+=1;mn-=1;}
+  const n=Math.max(cols.length-1,1);
+  const X=i=>P+(W-2*P)*(cols.length===1?0.5:i/n),Y=v=>H-P-(H-2*P)*(v-mn)/(mx-mn);
+  let band="";
+  if(r&&(r[0]!=null||r[1]!=null)){const y1=Y(r[1]!=null?r[1]:mx),y2=Y(r[0]!=null?r[0]:mn);band=`<rect x="0" y="${y1.toFixed(1)}" width="${W}" height="${Math.max(1,y2-y1).toFixed(1)}" fill="var(--accent-soft)"/>`;}
+  const line=pts.length>1?`<polyline fill="none" stroke="var(--muted)" stroke-width="1.3" points="${pts.map(q=>X(q.i).toFixed(1)+","+Y(q.x).toFixed(1)).join(" ")}"/>`:"";
+  const dots=pts.map((q,j)=>{const last=j===pts.length-1;const c=q.f==="hi"?"var(--hi)":q.f==="lo"?"var(--lo)":"var(--ink)";return last||q.f?`<circle cx="${X(q.i).toFixed(1)}" cy="${Y(q.x).toFixed(1)}" r="${last?2.6:1.8}" fill="${c}"/>`:"";}).join("");
+  return`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="Trend">${band}${line}${dots}</svg>`;}
+
+/* ---------- Main ---------- */
+const CHEV=`<svg class="chev" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+function hasData(p,pn){return allTests(p,pn).some(t=>Object.keys((p.v||{})[t.key]||{}).length);}
+function isOpen(p,pn){if(hasData(p,pn))return true;const k=pn.key;if(k in S.openPanels)return S.openPanels[k];return pn.core;}
+
+function renderMain(){
+  const m=$("#main");if(S.view==="chase")return renderChaseAll(m);const p=current();
+  if(!p&&S.tab!=="active"){m.innerHTML=`<div class="welcome"><h2>No ${S.tab} patients</h2><p>${S.tab==="discharged"?"When you discharge a patient they move here with all their results, reports and images, ready if they're readmitted.":"Patients marked as deceased are kept here for reference."}</p></div>`;return;}
+  if(!p){m.innerHTML=`<div class="welcome"><h2>No patients yet</h2><p>Add a patient to start trending their bloods.</p><button class="btn primary" type="button" data-act="add">+ Add patient</button></div>`;return;}
+  const exMode=isEx(S.cur);const cols=sortedCols(p);
+  const ag=p.age?String(p.age).replace(/\s*y$/i,"")+"y":age(p.dob);
+  const meta=[[p.sex,ag].filter(Boolean).join(" "),p.ward,p.dx].filter(Boolean);
+  let h="";
+  const pst=stOf(p);
+  if(pst==="discharged")h+=`<div class="sbanner dis"><span><b>Discharged</b>${p.dischargedAt?" "+esc(fmtDT(p.dischargedAt).d)+" "+esc(fmtDT(p.dischargedAt).t):""}. All results, reports and images are kept.</span><button class="btn primary small" type="button" data-st="readmit">Readmit</button></div>`;
+  if(pst==="deceased")h+=`<div class="sbanner dec"><span><b>Deceased</b>${p.diedAt?" "+esc(fmtDT(p.diedAt).d)+" "+esc(fmtDT(p.diedAt).t):""}. Record kept for reference.</span></div>`;
+  if(exMode)h+=`<div class="banner">These are three example patients so you can see how trending looks across different systems. Edits here aren't saved. Add your first patient to start; the examples then disappear.</div>`;
+  h+=`<div class="phead"><div><h2>${esc(p.name||"Unnamed patient")}</h2><div class="meta">${meta.map(x=>`<span>${esc(x)}</span>`).join("")||"<span>Add details below</span>"}</div></div>
+   <div class="toolbar"><button class="btn" type="button" data-act="paste">Paste results</button><button class="btn primary" type="button" data-act="entry">+ Enter results</button></div></div>`;
+  h+=chaseHTML(p,S.cur,false);
+  const openDetails=!p.name&&!exMode;
+  h+=`<details class="card" id="detailsCard" ${openDetails?"open":""}><summary>${CHEV}Patient details</summary><div class="fields">
+   ${fld("name","Label (e.g. initials or bed)",p.name)}${fld("age","Age (years)",p.age||(age(p.dob)||"").replace("y",""),"number")}
+   <label class="field"><span>Sex (sets ranges)</span><select id="f_sex" data-f="sex"><option value="">Not set</option><option value="M" ${p.sex==="M"?"selected":""}>Male</option><option value="F" ${p.sex==="F"?"selected":""}>Female</option></select></label>
+   ${fld("ward","Ward / bed",p.ward)}${fld("consultant","Consultant / team",p.consultant)}${fld("admitted","Admission date",p.admitted,"date")}${fld("dx","Working diagnosis",p.dx)}
+   </div><p class="hint">No names, hospital numbers or dates of birth are stored. Use initials or bed number as the label.</p></details>`;
+  h+=`<div class="sectlabel"><span>Results by system · D1 → latest, left to right</span><span><button class="linkbtn" type="button" data-act="showall" aria-pressed="${S.showAll}">${S.showAll?"Hide empty tests":"Show empty tests"}</button><button class="linkbtn" type="button" data-act="expand">Expand all</button><button class="linkbtn" type="button" data-act="collapse">Collapse all</button></span></div>`;
+  const hiddenP=[];let shown=0;
+  for(const pn of PANELS){const ph=panelHTML(p,pn,cols);if(ph){h+=ph;shown++;}else hiddenP.push(pn.name);}
+  if(!shown)h+=`<div class="card" style="padding:16px"><p class="nodata">No results yet. Use <b>+ Enter results</b> after the next blood draw.</p></div>`;
+  else if(hiddenP.length)h+=`<p class="nodata">No results yet: ${esc(hiddenP.join(" · "))}</p>`;
+  h+=reportsHTML(p);
+  h+=`<details class="card" open><summary>${CHEV}Notes <span class="sys" style="font-weight:400">${(p.notes||[]).length||""}</span></summary><div class="notes">${
+    [...(p.notes||[])].sort((a,b)=>a.dt<b.dt?1:-1).map(n=>{const f=fmtDT(n.dt);return`<div class="note"><time>${esc(f.d)} ${esc(f.t)}</time><p>${esc(n.text)}</p><button class="rmrow" type="button" data-rmnote="${esc(n.id)}" aria-label="Delete note">✕</button></div>`;}).join("")||`<div class="empty" style="padding:4px 0 6px">No notes yet. Record trends, actions taken and who you informed.</div>`
+  }</div><form class="noteform" id="noteForm"><textarea id="noteText" placeholder="e.g. K⁺ 5.9 → repeat sample, ECG done, SHO informed" aria-label="New note"></textarea><button class="btn" type="submit">Add note</button></form></details>`;
+  h+=`<div class="foot"><span>Ranges are from your lab's reports. Ranges marked * are typical adult values, since your lab reports didn't include them.</span>${exMode?"":`<span class="stact">${pst==="active"?`<button class="btn small" type="button" data-st="discharge">Discharge</button><button class="btn small" type="button" data-st="deceased">Mark deceased</button>`:pst==="discharged"?`<button class="btn small" type="button" data-st="readmit">Readmit</button><button class="btn small" type="button" data-st="deceased">Mark deceased</button><button class="btn danger small" type="button" id="delPatient">Delete permanently</button>`:`<button class="btn small" type="button" data-st="reactivate">Move back to active</button><button class="btn danger small" type="button" id="delPatient">Delete permanently</button>`}</span>`}</div><div id="stconf"></div>`;
+  m.innerHTML=h;
+  m.querySelectorAll(".twrap").forEach(w=>{w.scrollLeft=w.scrollWidth;});}
+
+function fld(k,label,val,type){return`<label class="field"><span>${esc(label)}</span><input id="f_${k}" data-f="${k}" type="${type||"text"}" value="${esc(val)}" autocomplete="off"></label>`;}
+
+function rowHas(p,key){const r=(p.v||{})[key];return!!r&&Object.values(r).some(v=>v!=null&&String(v).trim()!=="");}
+function panelHTML(p,pn,cols){
+  const all=allTests(p,pn);const tests=S.showAll?all:all.filter(t=>rowHas(p,t.key));
+  if(!tests.length)return"";
+  const missing=S.showAll?[]:all.filter(t=>!tests.includes(t)).map(t=>t.n);
+  const f=latestFlags(p,pn);
+  const chips=(f.hi?`<span class="chip hi" title="High on latest">${f.hi} ↑</span>`:"")+(f.lo?`<span class="chip lo" title="Low on latest">${f.lo} ↓</span>`:"");
+  let t=`<details class="card panel" data-panel="${pn.key}" ${isOpen(p,pn)?"open":""}><summary>${CHEV}${esc(pn.name)} <span class="sys">${esc(pn.sys)}</span><span class="flags">${chips}</span></summary>`;
+  t+=`<div class="twrap"><table><thead><tr><th class="c-test">Test</th><th>Units</th><th>Range</th><th>Trend</th>`;
+  cols.forEach((c,i)=>{const d=fmtDT(c.dt);t+=`<th class="colh"><button type="button" class="d eb" data-editcol="${esc(c.id)}" title="Edit this sample">D${i+1} · ${esc(d.d)}</button><div>${esc(d.t)}</div><button class="x" type="button" data-rmcol="${esc(c.id)}" aria-label="Remove sample ${esc(d.d)} ${esc(d.t)}">✕</button></th>`;});
+  if(!cols.length)t+=`<th></th>`;
+  t+=`</tr></thead><tbody>`;
+  for(const ts of tests){const r=rangeFor(ts,p.sex);const row=(p.v||{})[ts.key]||{};
+    t+=`<tr data-k="${esc(ts.key)}"><th class="c-test" scope="row">${esc(ts.n)}${ts.custom?`<button class="rmrow" type="button" data-rmtest="${esc(ts.key)}" data-pn="${pn.key}" aria-label="Remove ${esc(ts.n)}">✕</button>`:""}</th><td class="c-u">${esc(ts.u)}</td><td class="c-r">${esc(ts.custom?"—":rangeLabel(ts))}</td><td class="c-sp">${spark(p,ts)}</td>`;
+    cols.forEach(c=>{const val=row[c.id]??"";const fl=flag(val,r);const d=fmtDT(c.dt);
+      t+=`<td class="v ${fl}"><input id="v_${esc(ts.key)}_${esc(c.id)}" data-k="${esc(ts.key)}" data-c="${esc(c.id)}" value="${esc(val)}" inputmode="decimal" autocomplete="off" aria-label="${esc(ts.n)} ${esc(d.d)} ${esc(d.t)}"></td>`;});
+    if(!cols.length)t+=`<td class="empty">Use + Enter results to add a sample</td>`;
+    t+=`</tr>`;}
+  t+=`</tbody></table></div>${missing.length?`<div class="notmeas">Not measured: ${esc(missing.join(", "))}</div>`:""}${S.showAll?`<form class="addtest" data-addtest="${pn.key}">`:"<!--"}<input id="nt_${pn.key}" placeholder="Add another test" aria-label="New test name"><input class="u" id="nu_${pn.key}" placeholder="Units" aria-label="Units"><button class="btn small" type="submit">Add test</button>${S.showAll?"</form>":"-->"}</details>`;
+  return t;}
+
+function renderAll(){renderSidebar();renderMain();refreshStatus();}
+
+/* ---------- Events ---------- */
+function materialiseExample(){ /* no-op: example edits are local only */ }
+$("#addPatient").addEventListener("click",addPatient);
+function addPatient(){
+  const id=uid();const p=blank();S.patients[id]=p;S.examples=null;S.cur=id;S.view="patient";touch(id);renderAll();
+  setTimeout(()=>{const el=$("#f_name");if(el)el.focus();},0);}
+
+$("#plist").addEventListener("click",e=>{const b=e.target.closest("[data-p]");if(!b)return;S.cur=b.dataset.p;S.view="patient";renderAll();window.scrollTo(0,0);});
+$("#stabs").addEventListener("click",e=>{const b=e.target.closest("[data-stab]");if(!b)return;S.tab=b.dataset.stab;S.view="patient";
+  const l=S.tab==="active"&&!ordered().length&&S.examples?Object.keys(S.examples).map(k=>[k]):orderedBy(S.tab);
+  if(!(current()&&(isEx(S.cur)?S.tab==="active":stOf(current())===S.tab)))S.cur=l.length?l[0][0]:null;renderAll();window.scrollTo(0,0);});
+$("#chaseAll").addEventListener("click",()=>{S.view="chase";renderAll();window.scrollTo(0,0);});
+
+const main=$("#main");
+main.addEventListener("input",e=>{
+  const el=e.target;const p=current();if(!p)return;
+  if(el.dataset.f){p[el.dataset.f]=el.value;touch(S.cur);
+    if(el.dataset.f==="name"){const h=main.querySelector(".phead h2");if(h)h.textContent=el.value||"Unnamed patient";renderSidebar();}
+    return;}
+  if(el.dataset.k&&el.dataset.c){
+    const k=el.dataset.k,c=el.dataset.c;p.v=p.v||{};p.v[k]=p.v[k]||{};
+    if(el.value.trim()==="")delete p.v[k][c];else p.v[k][c]=el.value.trim();
+    const pn=PANELS.find(x=>k.startsWith(x.key+"."))||PANELS.find(x=>((p.custom||{})[x.key]||[]).some(t=>t.k===k));
+    const t=pn?allTests(p,pn).find(x=>x.key===k):null;
+    if(t){const td=el.parentElement;td.className="v "+flag(el.value,rangeFor(t,p.sex));
+      const sp=el.closest("tr").querySelector(".c-sp");if(sp)sp.innerHTML=spark(p,t);
+      const det=el.closest("details.panel");const f=latestFlags(p,pn);
+      det.querySelector(".flags").innerHTML=(f.hi?`<span class="chip hi">${f.hi} ↑</span>`:"")+(f.lo?`<span class="chip lo">${f.lo} ↓</span>`:"");}
+    touch(S.cur);}
+});
+main.addEventListener("change",e=>{if(e.target.dataset.f==="sex"){renderMain();}else if(e.target.dataset.f)renderSidebar();});
+main.addEventListener("keydown",e=>{
+  const el=e.target;if(e.key!=="Enter"||!el.dataset||!el.dataset.c)return;e.preventDefault();
+  const tr=el.closest("tr");let nx=tr.nextElementSibling;
+  while(nx){const inp=nx.querySelector(`input[data-c="${CSS.escape(el.dataset.c)}"]`);if(inp){inp.focus();inp.select();return;}nx=nx.nextElementSibling;}
+});
+main.addEventListener("toggle",e=>{const d=e.target;if(d.dataset&&d.dataset.panel){S.openPanels[d.dataset.panel]=d.open;lsSet(LS_OPEN,S.openPanels);}},true);
+
+let armTimer=null;
+function arm(btn,label,fn){
+  if(btn.classList.contains("armed")){clearTimeout(armTimer);fn();return;}
+  main.querySelectorAll(".armed").forEach(b=>{b.classList.remove("armed");if(b.dataset.orig)b.textContent=b.dataset.orig;});
+  btn.dataset.orig=btn.textContent;btn.textContent=label;btn.classList.add("armed");
+  clearTimeout(armTimer);armTimer=setTimeout(()=>{btn.classList.remove("armed");btn.textContent=btn.dataset.orig;},3500);}
+
+main.addEventListener("click",e=>{
+  const p=current();const t=e.target.closest("button");if(!t)return;
+  if(t.dataset.act==="add")return addPatient();
+  if(t.dataset.act==="expand"||t.dataset.act==="collapse"){const o=t.dataset.act==="expand";PANELS.forEach(pn=>S.openPanels[pn.key]=o);lsSet(LS_OPEN,S.openPanels);main.querySelectorAll("details.panel").forEach(d=>d.open=o);return;}
+  if(t.dataset.act==="showall"){S.showAll=!S.showAll;lsSet("wardbloods.showall",S.showAll);renderMain();return;}
+  if(!p)return;
+  if(t.dataset.act==="entry")return entrySheet(null);
+  if(t.dataset.act==="paste")return pasteSheet();
+  if(t.dataset.editcol)return entrySheet(t.dataset.editcol);
+  if(t.dataset.rmcol){const id=t.dataset.rmcol;arm(t,"Remove?",()=>{p.cols=p.cols.filter(c=>c.id!==id);for(const k in p.v)delete p.v[k][id];touch(S.cur);renderAll();});return;}
+  if(t.dataset.rmtest){const k=t.dataset.rmtest,pk=t.dataset.pn;arm(t,"Remove?",()=>{p.custom[pk]=(p.custom[pk]||[]).filter(x=>x.k!==k);delete p.v[k];touch(S.cur);renderMain();});return;}
+  if(t.dataset.rmnote){const id=t.dataset.rmnote;arm(t,"Delete?",()=>{p.notes=p.notes.filter(n=>n.id!==id);touch(S.cur);renderMain();});return;}
+  if(t.id==="delPatient"){arm(t,"Click again to delete everything for this patient",()=>removePatient(S.cur));return;}
+});
+main.addEventListener("submit",e=>{
+  e.preventDefault();const p=current();if(!p)return;const f=e.target;
+  if(f.id==="noteForm"){const tx=$("#noteText").value.trim();if(!tx)return;p.notes=p.notes||[];p.notes.push({id:uid().slice(0,12),dt:nowLocal(),text:tx});touch(S.cur);renderMain();return;}
+  if(f.dataset.addtest){const pk=f.dataset.addtest;const n=$("#nt_"+pk).value.trim();if(!n)return;p.custom=p.custom||{};p.custom[pk]=p.custom[pk]||[];
+    p.custom[pk].push({k:"c_"+uid().slice(0,10),n,u:$("#nu_"+pk).value.trim()});S.openPanels[pk]=true;touch(S.cur);renderMain();return;}
+});
+
+/* ---------- Entry sheet ---------- */
+const layer=document.createElement("div");document.body.appendChild(layer);
+function closeSheet(){if(S.sheetCleanup){const c=S.sheetCleanup;S.sheetCleanup=null;try{c();}catch(e){}}layer.innerHTML="";document.removeEventListener("keydown",escSheet);}
+function escSheet(e){if(e.key==="Escape")closeSheet();}
+function entrySheet(colId,preset){
+  const p=current();if(!p)return;const col=colId?(p.cols||[]).find(c=>c.id===colId):null;
+  const vals={};for(const k in (p.v||{})){const v=p.v[k][colId];if(col&&v!=null)vals[k]=v;}
+  if(preset)Object.assign(vals,preset.vals);
+  const orig={...vals};
+  let cur=(PANELS.find(pn=>allTests(p,pn).some(t=>vals[t.key]!=null))||PANELS[0]).key;
+  const filled=pn=>allTests(p,pn).filter(t=>String(vals[t.key]??"").trim()!=="").length;
+  const tabs=()=>PANELS.map(pn=>{const n=filled(pn);return`<button type="button" role="tab" data-pn="${pn.key}" aria-selected="${pn.key===cur}">${esc(pn.name)}${n?`<span class="n">${n}</span>`:""}</button>`;}).join("");
+  const rows=()=>allTests(p,PANELS.find(x=>x.key===cur)).map(t=>{const v=vals[t.key]??"";const fl=t.custom?"":flag(v,rangeFor(t,p.sex));
+    return`<div class="erow"><label for="e_${esc(t.key)}">${esc(t.n)}<small>${esc(t.u)}${t.u?" · ":""}${esc(t.custom?"custom":rangeLabel(t))}</small></label><input id="e_${esc(t.key)}" data-ek="${esc(t.key)}" inputmode="decimal" autocomplete="off" enterkeyhint="next" value="${esc(v)}" class="${fl}"></div>`;}).join("");
+  const count=()=>Object.values(vals).filter(v=>String(v??"").trim()!=="").length;
+  const d=col?fmtDT(col.dt):null;
+  layer.innerHTML=`<div class="scrim" data-close></div><form class="sheet" id="esheet" novalidate>
+    <header><h2>${col?"Edit sample · "+esc(d.d)+" "+esc(d.t):(preset?"Check pasted results · ":"Enter results · ")+esc(p.name||"patient")}</h2><button class="rmrow" type="button" data-close aria-label="Close" style="font-size:16px">✕</button></header>
+    <div class="sbody"><label class="field"><span>Sample taken</span><input id="e_dt" type="datetime-local" required value="${col?esc(col.dt):esc(preset&&preset.dt||nowLocal())}"></label>${preset?preset.note:""}
+      <div class="ptabs" role="tablist" id="eptabs">${tabs()}</div><div class="erows" id="erows">${rows()}</div>
+      <p class="shint">Fill only what was sent. Only tests with values appear in the table. Values outside the range turn red (high) or blue (low).</p></div>
+    <div class="sfoot">${col?`<button class="btn danger small grow" type="button" id="edel">Delete sample</button>`:`<span class="grow"></span>`}<button class="btn" type="button" data-close>Cancel</button><button class="btn primary" type="submit" id="esave">Save</button></div></form>`;
+  const f=layer.querySelector("#esheet");
+  const upd=()=>{f.querySelector("#esave").textContent="Save · "+count()+" result"+(count()===1?"":"s");};upd();
+  const redraw=()=>{f.querySelector("#eptabs").innerHTML=tabs();f.querySelector("#erows").innerHTML=rows();};
+  layer.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",closeSheet));
+  document.addEventListener("keydown",escSheet);
+  f.querySelector("#eptabs").addEventListener("click",e=>{const b=e.target.closest("[data-pn]");if(!b)return;cur=b.dataset.pn;redraw();const i=f.querySelector("#erows input");if(i)i.focus();});
+  f.addEventListener("input",e=>{const i=e.target;if(!i.dataset.ek)return;vals[i.dataset.ek]=i.value;
+    const pn=PANELS.find(x=>x.key===cur);const t=allTests(p,pn).find(x=>x.key===i.dataset.ek);i.className=t&&!t.custom?flag(i.value,rangeFor(t,p.sex)):"";
+    upd();const tb=f.querySelector(`[data-pn="${cur}"]`);const n=filled(pn);let bd=tb.querySelector(".n");
+    if(n&&!bd){bd=document.createElement("span");bd.className="n";tb.appendChild(bd);}if(bd){if(n)bd.textContent=n;else bd.remove();}});
+  f.addEventListener("keydown",e=>{if(e.key!=="Enter"||!e.target.dataset.ek)return;e.preventDefault();
+    const all=[...f.querySelectorAll("#erows input")];const i=all.indexOf(e.target);if(all[i+1]){all[i+1].focus();return;}
+    const idx=PANELS.findIndex(x=>x.key===cur);if(PANELS[idx+1]){cur=PANELS[idx+1].key;redraw();f.querySelector("#erows input").focus();}});
+  f.addEventListener("submit",e=>{e.preventDefault();
+    const dt=f.querySelector("#e_dt").value;if(!dt){f.querySelector("#e_dt").focus();return;}
+    if(!col&&!count()){const h=f.querySelector(".shint");h.style.color="var(--hi)";h.textContent="Enter at least one result, or press Cancel.";return;}
+    let id=colId;
+    if(!col){id=uid().slice(0,12);p.cols=p.cols||[];p.cols.push({id,dt});}else col.dt=dt;
+    p.v=p.v||{};
+    for(const k of new Set([...Object.keys(vals),...Object.keys(orig)])){const v=String(vals[k]??"").trim();
+      if(v===""){if(p.v[k])delete p.v[k][id];}else{p.v[k]=p.v[k]||{};p.v[k][id]=v;}}
+    touch(S.cur);closeSheet();renderAll();
+    requestAnimationFrame(()=>main.querySelectorAll(".twrap").forEach(w=>{w.scrollLeft=w.scrollWidth;}));});
+  const del=f.querySelector("#edel");
+  if(del)del.addEventListener("click",()=>{if(!del.classList.contains("armed")){del.classList.add("armed");del.textContent="Click again to delete";setTimeout(()=>{del.classList.remove("armed");del.textContent="Delete sample";},3500);return;}
+    p.cols=p.cols.filter(c=>c.id!==colId);for(const k in p.v)delete p.v[k][colId];touch(S.cur);closeSheet();renderAll();});
+  setTimeout(()=>{const i=f.querySelector("#erows input");if(i)i.focus();},0);}
+
+/* ---------- Paste import ---------- */
+/* Lab names → test keys. Add your lab's spellings here. */
+const ALIASES={
+ "fbc.wcc":["wbc","wcc","whitecount","whitecells","tlc"],"fbc.rbc":["rbc","redcells","redcellcount"],
+ "fbc.hb":["hb","hgb","haemoglobin","hemoglobin"],"fbc.hct":["hct","pcv","haematocrit","hematocrit"],
+ "fbc.mcv":["mcv"],"fbc.mch":["mch"],"fbc.mchc":["mchc"],"fbc.rdw":["rdw","rdwcv"],"fbc.rdwsd":["rdwsd"],"fbc.mpv":["mpv"],
+ "fbc.plt":["plt","plts","platelets","platelet","platelet count"],
+ "fbc.neutp":["neutrophilspct","neutrophilpct","neutpct","neutspct"],"fbc.neut":["neut","neuts","neutrophils","neutrophil","anc","neutabs","neutrophilsabs","neutrophilabs","neutsabs"],
+ "fbc.lymphp":["lymphocytespct","lymphpct","lymphspct"],"fbc.lymph":["lymph","lymphs","lymphocytes","lymphocyte","lymphocytesabs","lymphabs"],
+ "fbc.monop":["monocytespct","monopct","monospct"],"fbc.mono":["mono","monos","monocytes","monocytesabs","monoabs"],
+ "fbc.eosp":["eosinophilspct","eospct"],"fbc.eos":["eos","eosinophils","eosinophil","eosinophilsabs","eosabs"],
+ "fbc.basop":["basophilspct","basopct"],"fbc.baso":["baso","basophils","basophilsabs","basoabs"],
+ "fbc.retic":["retic","retics","reticulocytes"],
+ "ue.na":["na","sodium"],"ue.k":["k","potassium"],"ue.cl":["cl","chloride"],"ue.hco3":["co2","hco3","tco2","bicarb","bicarbonate"],
+ "ue.urea":["urea","bun"],"ue.cr":["cr","crt","creat","cre","creatinine"],"ue.egfr":["egfr","gfr"],"ue.ag":["ag","aniongap"],
+ "lft.bili":["tbili","bili","tbil","bilirubin","totalbilirubin","totbili"],"lft.dbili":["dbili","dbil","directbili","directbilirubin","conjbili"],
+ "lft.ast":["ast","sgot","astsgot"],"lft.alt":["alt","sgpt","altsgpt"],"lft.alp":["alp","alkphos","alkphosphatase","alkalinephosphatase"],
+ "lft.ggt":["ggt","gammagt"],"lft.alb":["alb","albumin"],"lft.tp":["tp","totalprotein","protein"],"lft.amy":["amylase","amy","lipase"],
+ "bone.ca":["ca","calcium","cacorr","correctedca","corrca","adjca","cacorrected","calciumcorrect","calciumcorrected","correctedcalcium"],
+ "bone.po4":["po4","phos","phosphate","phosphorus"],"bone.mg":["mg","magnesium"],
+ "inf.crp":["crp"],"inf.esr":["esr"],"inf.pct":["pct","procalcitonin"],"inf.lac":["lactate","lac","lact"],
+ "coag.pt":["pt","protime","prothrombintime"],"coag.inr":["inr"],"coag.aptt":["aptt","ptt"],"coag.fib":["fib","fibrinogen"],"coag.ddim":["ddimer","dd","ddimers"],
+ "endo.glu":["fastingglucose","fbs","fbg","fpg","glucosefasting"],"endo.rbs":["glucose","glu","rbs","rbg","bs","bg","cbg","randomglucose"],
+ "endo.a1c":["hba1c","a1c"],"endo.tsh":["tsh"],"endo.ft4":["ft4","freet4","t4free"],
+ "endo.tc":["chol","tc","cholesterol","totalcholesterol"],"endo.hdl":["hdl","hdlcholesterol"],"endo.tg":["tg","trig","trigs","triglycerides"],
+ "endo.ldl":["ldl","directldl","ldlcholesterol","ldldirect"],
+ "card.trop":["trop","troponin","troponinhsxt","hstrop","tnt","tni","hstnt","hstni"],"card.ck":["ck","cpk"],"card.ckmb":["ckmb"],
+ "card.bnp":["bnp"],"card.ntbnp":["ntprobnp","ntbnp"],
+ "haem.ferr":["ferritin","ferr"],"haem.fe":["iron","fe"],"haem.tibc":["tibc"],"haem.b12":["b12","vitb12"],"haem.fol":["folate","folicacid"],
+ "abg.ph":["ph"],"abg.po2":["po2"],"abg.pco2":["pco2"],"abg.be":["be","baseexcess"],"abg.fio2":["fio2"]
+};
+const normName=x=>String(x).toLowerCase().replace(/[⁺⁻₂₃²]/g,m=>({"₂":"2","₃":"3","²":"2"}[m]||"")).replace(/%/g,"pct").replace(/#/g,"abs").replace(/[^a-z0-9]/g,"");
+const UNITISH=/^(h|l|hh|ll|mmoll|umoll|µmoll|kul|mul|gdl|gl|fl|pg|ul|iul|sec|s|ngml|pgml|mgl|dl|ml|ratio|low|high|intermediate|normal|abnormal|pend|range|ranges|units|test)$/;
+function aliasMap(p){const m={};for(const k in ALIASES)for(const a of ALIASES[k])m[normName(a)]=k;
+  for(const pn of PANELS)for(const t of allTests(p,pn)){if(t.custom)m[normName(t.n)]=t.key;else if(!m[normName(t.n)])m[normName(t.n)]=t.key;}
+  return m;}
+function parsePaste(text,p){
+  let dt=null,rest=String(text||"").split(/\r?\n/).filter(l=>!/ranges?\s+in\s+effect|effective\s+from/i.test(l)).join("\n");
+  let m=rest.match(/\b(\d{4})[\/\-.](\d{1,2})[\/\-.](\d{1,2})\b/);
+  if(m){dt={y:+m[1],mo:+m[2],d:+m[3]};rest=rest.replace(m[0]," ");}
+  else if((m=rest.match(/\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{4})\b/))){const a=+m[1],b=+m[2];
+    dt=a>12?{y:+m[3],mo:b,d:a}:{y:+m[3],mo:a,d:b};rest=rest.replace(m[0]," ");}
+  let tm=rest.match(/\b(\d{1,2}):(\d{2})\b/);if(tm)rest=rest.replace(tm[0]," ");
+  rest=rest.replace(/T4\s*,\s*FREE/ig,"FT4").replace(/>\/=|<\/=/g,"");
+  const map=aliasMap(p);const vals={},unknown=[],dup=[];
+  for(const seg of rest.split(/[,;\n\r\t|]+/)){
+    const re=/([A-Za-z][A-Za-z0-9 ().'+\-⁺⁻₂₃%#]*?)\s*[:=]?\s+([<>≤≥]?\s*-?\d+(?:\.\d+)?)/g;let q;
+    while((q=re.exec(seg+" "))){const name=q[1].trim();const key=map[normName(name)];const v=q[2].replace(/\s+/g,"");
+      if(key){if(vals[key]!=null&&vals[key]!==v)dup.push(name);vals[key]=v;}else{const nn=normName(name);if(name.length<=24&&nn.length>1&&!/^[HL]\s/.test(name)&&!UNITISH.test(nn)&&!/(mmol|umol|iul|kul)$/.test(nn))unknown.push(name);}}}
+  let dts=null;
+  if(dt&&dt.mo>=1&&dt.mo<=12&&dt.d>=1&&dt.d<=31){const pad2=n=>String(n).padStart(2,"0");
+    dts=dt.y+"-"+pad2(dt.mo)+"-"+pad2(dt.d)+"T"+(tm?pad2(+tm[1])+":"+tm[2]:"06:00");}
+  return{vals,dt:dts,hasTime:!!tm,unknown:[...new Set(unknown)],dup:[...new Set(dup)]};}
+function pasteSheet(){
+  const p=current();if(!p)return;
+  layer.innerHTML=`<div class="scrim" data-close></div><form class="sheet" id="psheet" novalidate>
+    <header><h2>Paste results · ${esc(p.name||"patient")}</h2><button class="rmrow" type="button" data-close aria-label="Close" style="font-size:16px">✕</button></header>
+    <div class="sbody"><label class="field" for="ptext"><span>Paste the results as copied from the lab</span></label>
+      <textarea id="ptext" class="pastebox" spellcheck="false" placeholder="2026/09/18&#10;WBC 19.4, HGB 13.0, MCV 88.0, plts 232&#10;Na 133, K 4.3, Cl 93, CO2 25, BUN 4.5, Crt 71.6"></textarea>
+      <p class="shint">Only recognised test names and their numbers are kept. Anything else in the paste, including names or hospital numbers, is ignored and never saved. You'll check every value before it's added.</p></div>
+    <div class="sfoot"><span class="grow"></span><button class="btn" type="button" data-close>Cancel</button><button class="btn primary" type="submit">Read results</button></div></form>`;
+  layer.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",closeSheet));
+  document.addEventListener("keydown",escSheet);
+  const f=layer.querySelector("#psheet");const ta=f.querySelector("#ptext");setTimeout(()=>ta.focus(),0);
+  f.addEventListener("submit",e=>{e.preventDefault();const r=parsePaste(ta.value,p);const n=Object.keys(r.vals).length;
+    if(!n){const h=f.querySelector(".shint");h.style.color="var(--hi)";h.textContent="No recognised results found. Check the paste has test names followed by numbers, e.g. \"Na 133, K 4.3\".";return;}
+    const notes=[`<span><b>${n} results read.</b> Check each tab, then save.</span>`];
+    if(!r.dt)notes.push(`<span>No date found in the paste. Set the sample time above.</span>`);
+    else if(!r.hasTime)notes.push(`<span>No time in the paste, so 06:00 is used. Change it above if needed.</span>`);
+    if(r.unknown.length)notes.push(`<span>Not recognised (ignored): ${esc(r.unknown.slice(0,12).join(", "))}</span>`);
+    if(r.dup.length)notes.push(`<span>Appeared twice, last value kept: ${esc(r.dup.join(", "))}</span>`);
+    entrySheet(null,{vals:r.vals,dt:r.dt,note:`<div class="readnote${(!r.dt||r.unknown.length)?" warn":""}">${notes.join("")}</div>`});});}
+
+/* ---------- Reports: microbiology, pathology, radiology ---------- */
+const REP={
+ micro:{title:"Microbiology & cultures",sys:"Infection",add:"+ Add culture / micro",empty:"No cultures or micro results yet."},
+ path:{title:"Pathology & histology",sys:"Tissue / cytology",add:"+ Add pathology",empty:"No pathology or biopsy results yet."},
+ rad:{title:"Radiology & imaging",sys:"Imaging",add:"+ Add imaging",empty:"No imaging reports yet."}};
+const STATUS={micro:["Pending","Preliminary","Final"],path:["Pending","Reported"],rad:["Requested","Done, awaiting report","Reported"]};
+const DL={
+ spec:["Blood culture (peripheral)","Blood culture (line)","Urine (MSU)","Urine (catheter)","Sputum","Wound swab","Pus / aspirate","CSF","Stool","Throat swab","Nasal / MRSA screen","Pleural fluid","Ascitic fluid","Joint fluid","Tissue","Line tip","High vaginal swab","Other"],
+ mtest:["Culture & sensitivity","Gram stain","Microscopy","PCR","AFB smear","GeneXpert MTB/RIF","Malaria film","Antigen test","Fungal culture","C. difficile toxin","Viral PCR","Other"],
+ abx:["Amoxicillin","Ampicillin","Co-amoxiclav","Penicillin","Flucloxacillin / Oxacillin","Piperacillin-tazobactam","Cefazolin","Cefuroxime","Ceftriaxone","Cefotaxime","Ceftazidime","Cefepime","Meropenem","Imipenem","Ertapenem","Gentamicin","Amikacin","Ciprofloxacin","Levofloxacin","Moxifloxacin","Nitrofurantoin","Trimethoprim-sulfamethoxazole","Trimethoprim","Vancomycin","Teicoplanin","Linezolid","Clindamycin","Erythromycin","Azithromycin","Clarithromycin","Doxycycline","Tetracycline","Metronidazole","Fosfomycin","Colistin","Fluconazole","Voriconazole"],
+ proc:["Biopsy","Core biopsy","Excision","Resection","FNA cytology","Fluid cytology","Bone marrow aspirate / trephine","Endoscopic biopsy","Frozen section","Other"],
+ mod:["X-ray","CT","MRI","Ultrasound","Echo","Fluoroscopy","Nuclear / PET","Mammography","Doppler","Other"]};
+const ACCEPT=["image/png","image/jpeg","image/webp","image/gif","application/pdf"];
+S.assets=null;S.sheetCleanup=null;
+
+function statusPill(s){const cls=/final|reported/i.test(s||"")?"ok":/prelim/i.test(s||"")?"prelim":"pend";return s?`<span class="stp ${cls}">${esc(s)}</span>`:"";}
+function sensChips(sens){return(sens||[]).filter(x=>x.abx&&x.r).map(x=>`<span class="sens ${x.r}">${esc(x.abx)} <b>${x.r}</b></span>`).join("");}
+function filesHTML(files,editable){
+  const fs=(files||[]);if(!fs.length)return"";
+  return`<div class="files">${fs.map((f,i)=>{
+    const rm=editable?`<button class="frm" type="button" data-frm="${i}" aria-label="Remove ${esc(f.name)}">✕</button>`:"";
+    if(f.busy)return`<div class="fitem busy"><span>Uploading ${esc(f.name)}…</span></div>`;
+    if(f.type==="application/pdf")return`<div class="fitem pdf"><a href="${esc(fileSrc(f.id)||"#")}" data-fsrc="${esc(f.id)}" target="_blank" rel="noopener">PDF · ${esc(f.name)}</a>${rm}</div>`;
+    return`<div class="fitem"><button class="thumb" type="button" data-lightbox="${esc(f.id)}" aria-label="View ${esc(f.name)}"><img${fileSrc(f.id)?` src="${esc(fileSrc(f.id))}"`:""} data-fsrc="${esc(f.id)}" alt="${esc(f.name)}" loading="lazy"></button>${rm}</div>`;}).join("")}</div>`;}
+function entryHTML(type,e){
+  const d=fmtDT(e.dt);let head="",body="";
+  if(type==="micro"){head=`<b>${esc(e.specimen||"Specimen")}</b>${e.test?" · "+esc(e.test):""}`;
+    body=(e.organism?`<p class="org">${esc(e.organism)}</p>`:"")+(e.result?`<p class="res">${esc(e.result)}</p>`:"")+((e.sens||[]).some(x=>x.abx&&x.r)?`<div class="sensrow">${sensChips(e.sens)}</div>`:"");}
+  if(type==="path"){head=`<b>${esc(e.specimen||"Specimen")}</b>${e.procedure?" · "+esc(e.procedure):""}`;
+    body=(e.diagnosis?`<p class="org">${esc(e.diagnosis)}</p>`:"")+(e.report?`<details class="full"><summary>Full report</summary><p class="res">${esc(e.report)}</p></details>`:"");}
+  if(type==="rad"){head=`${e.modality?`<span class="mod">${esc(e.modality)}</span> `:""}<b>${esc(e.study||"Study")}</b>`;
+    body=(e.impression?`<p class="org">${esc(e.impression)}</p>`:"")+(e.report?`<details class="full"><summary>Full report</summary><p class="res">${esc(e.report)}</p></details>`:"");}
+  body+=filesHTML(e.files,false);
+  return`<article class="rentry"><div class="rhead"><time>${esc(d.d)} ${esc(d.t)}</time>${statusPill(e.status)}<span class="rtitle">${head}</span><button class="linkbtn" type="button" data-rep-edit="${type}:${esc(e.id)}">Edit</button></div>${body}</article>`;}
+function reportsHTML(p){
+  let h=`<div class="sectlabel"><span>Micro, pathology and imaging · newest first</span></div>`;
+  for(const type of ["micro","path","rad"]){
+    const list=[...(p[type]||[])].sort((a,b)=>a.dt<b.dt?1:-1);const cfg=REP[type];
+    const pend=list.filter(x=>!/final|reported/i.test(x.status||"")).length;
+    h+=`<details class="card rep" data-rep="${type}"${list.length?" open":""}><summary>${CHEV}${cfg.title} <span class="sys">${cfg.sys}</span><span class="flags">${pend?`<span class="chip pendc">${pend} awaiting</span>`:""}${list.length?`<span class="chip cntc">${list.length}</span>`:""}</span></summary>
+      <div class="replist">${list.map(e=>entryHTML(type,e)).join("")||`<p class="nodata">${cfg.empty}</p>`}</div>
+      <div class="repadd"><button class="btn small" type="button" data-rep-add="${type}">${cfg.add}</button></div></details>`;}
+  return h;}
+
+/* ---------- report sheet ---------- */
+async function shrinkImage(file){
+  if(!/^image\/(jpeg|png|webp)$/.test(file.type))return file;
+  try{const bmp=await createImageBitmap(file);const max=2560;const sc=Math.min(1,max/Math.max(bmp.width,bmp.height));
+    const c=document.createElement("canvas");c.width=Math.round(bmp.width*sc);c.height=Math.round(bmp.height*sc);
+    c.getContext("2d").drawImage(bmp,0,0,c.width,c.height);
+    const out=await new Promise(r=>c.toBlob(r,"image/jpeg",0.9));return out||file;}catch(e){return file;}}
+function repSheet(type,id){
+  const p=current();if(!p)return;const exMode=isEx(S.cur);
+  const cur=id?(p[type]||[]).find(x=>x.id===id):null;
+  const e=cur?JSON.parse(JSON.stringify(cur)):{id:uid().slice(0,12),dt:nowLocal(),status:STATUS[type][0],files:[],sens:[]};
+  e.files=(e.files||[]).filter(f=>f.id);if(type==="micro")e.sens=e.sens||[];
+  const orig=new Set((cur&&cur.files||[]).map(f=>f.id));const fresh=[];let busy=0;
+  const canUp=!!S.assets&&!exMode&&(S.mode==="cloud"||S.mode==="supabase");
+  const why=exMode?"Add a real patient to upload files. Example patients aren't saved.":"File upload works when this page is open in Claude and saving to your account.";
+  const fi=(k,l,v,extra)=>`<label class="field"><span>${l}</span><input id="r_${k}" data-rf="${k}" value="${esc(v??"")}" autocomplete="off"${extra||""}></label>`;
+  const ta=(k,l,v,rows,ph)=>`<label class="field"><span>${l}</span><textarea id="r_${k}" data-rf="${k}" rows="${rows}" placeholder="${esc(ph||"")}">${esc(v??"")}</textarea></label>`;
+  const sel=(k,l,opts,v)=>`<label class="field"><span>${l}</span><select id="r_${k}" data-rf="${k}">${(opts.includes(v)||!v?opts:[v,...opts]).map(o=>`<option${o===v?" selected":""}>${esc(o)}</option>`).join("")}</select></label>`;
+  const dls=`<datalist id="dl_spec">${DL.spec.map(x=>`<option value="${esc(x)}">`).join("")}</datalist><datalist id="dl_mtest">${DL.mtest.map(x=>`<option value="${esc(x)}">`).join("")}</datalist><datalist id="dl_abx">${DL.abx.map(x=>`<option value="${esc(x)}">`).join("")}</datalist><datalist id="dl_proc">${DL.proc.map(x=>`<option value="${esc(x)}">`).join("")}</datalist>`;
+  let body=`<div class="fields2">${fi("dt",type==="rad"?"Date of study":"Collected",e.dt,' type="datetime-local"')}${sel("status","Status",STATUS[type],e.status)}</div>`;
+  if(type==="micro")body+=`<div class="fields2">${fi("specimen","Specimen",e.specimen,' list="dl_spec" placeholder="e.g. Blood culture (peripheral)"')}${fi("test","Test",e.test,' list="dl_mtest" placeholder="e.g. Culture & sensitivity"')}</div>
+    ${fi("organism","Organism(s)",e.organism,' placeholder="e.g. Escherichia coli (ESBL negative)"')}
+    ${ta("result","Result / comment",e.result,3,"e.g. Gram-negative rods in 2/2 bottles at 18h. No growth at 48h.")}
+    <div class="field"><span>Sensitivities</span><div id="sens" class="senslist"></div>
+      <div class="sensbar"><button class="btn small" type="button" id="sensAdd">+ Antibiotic</button></div>
+      <details class="sensp"><summary>Paste sensitivities</summary><textarea id="sensPaste" rows="4" placeholder="Ampicillin R&#10;Ceftriaxone S&#10;Gentamicin S"></textarea><button class="btn small" type="button" id="sensRead">Add from paste</button></details></div>`;
+  if(type==="path")body+=`<div class="fields2">${fi("specimen","Specimen / site",e.specimen,' placeholder="e.g. Sigmoid colon biopsy"')}${fi("procedure","Procedure",e.procedure,' list="dl_proc"')}</div>
+    ${fi("diagnosis","Diagnosis / conclusion",e.diagnosis,' placeholder="e.g. Moderately differentiated adenocarcinoma"')}
+    ${ta("report","Full report",e.report,8,"Macroscopy, microscopy, comment…")}`;
+  if(type==="rad")body+=`<div class="fields2">${sel("modality","Modality",DL.mod,e.modality||"X-ray")}${fi("study","Study / region",e.study,' placeholder="e.g. CXR PA, CT abdomen/pelvis + contrast"')}</div>
+    ${ta("impression","Impression",e.impression,2,"e.g. Right lower lobe consolidation. No effusion.")}
+    ${ta("report","Full report",e.report,7,"Paste or type the radiologist's report")}`;
+  body+=`<div class="field"><span>Images and files</span>
+    ${canUp?`<label class="chk"><input type="checkbox" id="idok"> I've cropped or covered names, hospital numbers and dates of birth in these files</label>
+      <label class="btn small upl" id="uplLbl" aria-disabled="true">Upload images or PDF<input type="file" id="ufile" accept="${ACCEPT.join(",")}" multiple disabled></label>
+      <p class="shint">Photos are resized to 2560 px and their hidden metadata removed. X-ray and report screenshots often show the patient's name, so check before uploading.</p>`:`<p class="shint">${why}</p>`}
+    <div id="flist"></div><p class="shint ferr" id="ferr" hidden></p></div>`;
+  const d=cur?fmtDT(cur.dt):null;
+  layer.innerHTML=`<div class="scrim" data-close></div><form class="sheet" id="rsheet" novalidate>
+    <header><h2>${cur?"Edit":"Add"} ${esc(REP[type].title.split(" &")[0].toLowerCase())} · ${esc(p.name||"patient")}</h2><button class="rmrow" type="button" data-close aria-label="Close" style="font-size:16px">✕</button></header>
+    <div class="sbody">${dls}${body}</div>
+    <div class="sfoot">${cur?`<button class="btn danger small grow" type="button" id="rdel">Delete entry</button>`:`<span class="grow"></span>`}<button class="btn" type="button" data-close>Cancel</button><button class="btn primary" type="submit" id="rsave">Save</button></div></form>`;
+  const f=layer.querySelector("#rsheet");
+  S.sheetCleanup=()=>{fresh.forEach(fid=>{try{S.assets&&S.assets.delete(fid);}catch(x){}});};
+  layer.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",closeSheet));
+  document.addEventListener("keydown",escSheet);
+  const ferr=f.querySelector("#ferr");const showErr=m=>{ferr.hidden=!m;ferr.textContent=m||"";};
+  const drawFiles=()=>{f.querySelector("#flist").innerHTML=filesHTML(e.files,true);};drawFiles();
+  f.querySelector("#flist").addEventListener("click",ev=>{
+    const rm=ev.target.closest("[data-frm]");if(rm){const i=+rm.dataset.frm;const x=e.files[i];e.files.splice(i,1);
+      if(x&&x.id&&fresh.includes(x.id)){fresh.splice(fresh.indexOf(x.id),1);try{S.assets.delete(x.id);}catch(z){}}drawFiles();return;}
+    const lb=ev.target.closest("[data-lightbox]");if(lb){ev.preventDefault();lightbox(lb.dataset.lightbox);}});
+  if(canUp){const ok=f.querySelector("#idok"),inp=f.querySelector("#ufile"),lbl=f.querySelector("#uplLbl");
+    ok.addEventListener("change",()=>{inp.disabled=!ok.checked;lbl.setAttribute("aria-disabled",String(!ok.checked));});
+    inp.addEventListener("change",async()=>{showErr("");const list=[...inp.files];inp.value="";
+      for(const file of list){
+        if(!ACCEPT.includes(file.type)){showErr(file.name+": only PNG, JPEG, WebP, GIF or PDF files can be uploaded.");continue;}
+        const tmp={id:null,name:file.name,type:file.type==="application/pdf"?"application/pdf":"image/jpeg",busy:true};e.files.push(tmp);busy++;drawFiles();
+        try{const blob=file.type==="application/pdf"?file:await shrinkImage(file);
+          if(blob.size>20*1024*1024)throw{code:"too_large"};
+          const r=await S.assets.upload(blob,{type:blob.type||file.type});tmp.id=r.id;tmp.type=r.contentType;tmp.busy=false;fresh.push(r.id);}
+        catch(err){e.files.splice(e.files.indexOf(tmp),1);const c=err&&err.code;
+          showErr(file.name+": "+(c==="too_large"?"file is over 20 MB.":c==="unsupported_type"?"this file type can't be stored.":c==="quota_or_state"?"storage is full. Remove old files first.":c==="rate_limited"?"too many uploads at once. Wait a moment and try again.":"upload failed. Try again."));}
+        busy--;drawFiles();}});}
+  if(type==="micro"){
+    const sensBox=f.querySelector("#sens");
+    const drawSens=()=>{sensBox.innerHTML=e.sens.map((x,i)=>`<div class="srow"><input list="dl_abx" data-si="${i}" value="${esc(x.abx||"")}" placeholder="Antibiotic" aria-label="Antibiotic"><div class="sir" role="group" aria-label="Result">${["S","I","R"].map(r=>`<button type="button" class="${r}${x.r===r?" on":""}" data-sr="${i}:${r}" aria-pressed="${x.r===r}">${r}</button>`).join("")}</div><button class="frm" type="button" data-sx="${i}" aria-label="Remove">✕</button></div>`).join("")||`<p class="shint">None added. S = sensitive, I = intermediate, R = resistant.</p>`;};drawSens();
+    f.querySelector("#sensAdd").addEventListener("click",()=>{e.sens.push({abx:"",r:""});drawSens();const all=sensBox.querySelectorAll("input");all[all.length-1].focus();});
+    sensBox.addEventListener("input",ev=>{const i=ev.target.dataset.si;if(i!=null)e.sens[+i].abx=ev.target.value;});
+    sensBox.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;
+      if(b.dataset.sr){const [i,r]=b.dataset.sr.split(":");e.sens[+i].r=e.sens[+i].r===r?"":r;drawSens();}
+      if(b.dataset.sx!=null){e.sens.splice(+b.dataset.sx,1);drawSens();}});
+    f.querySelector("#sensRead").addEventListener("click",()=>{const t=f.querySelector("#sensPaste").value;let n=0;
+      const re=/([A-Za-z][A-Za-z0-9\-\/ .()]*?)\s*[:=\-]?\s+(S|I|R|SENSITIVE|SUSCEPTIBLE|INTERMEDIATE|RESISTANT)\b/gi;let m;
+      while((m=re.exec(t))){const w=m[2].toUpperCase();const r=w[0]==="S"?"S":w[0]==="I"?"I":"R";const abx=m[1].trim().replace(/\s+/g," ");
+        const ex=e.sens.find(x=>x.abx.toLowerCase()===abx.toLowerCase());if(ex)ex.r=r;else e.sens.push({abx:abx.charAt(0).toUpperCase()+abx.slice(1).toLowerCase(),r});n++;}
+      drawSens();f.querySelector("#sensPaste").value="";if(!n)showErr("No sensitivities found. Use one per line, e.g. \"Ceftriaxone S\".");});}
+  f.addEventListener("submit",ev=>{ev.preventDefault();
+    if(busy){showErr("Wait for uploads to finish.");return;}
+    f.querySelectorAll("[data-rf]").forEach(el=>{e[el.dataset.rf]=el.value.trim();});
+    if(!e.dt){f.querySelector("#r_dt").focus();return;}
+    if(type==="micro")e.sens=e.sens.filter(x=>x.abx.trim());
+    e.files=e.files.filter(x=>x.id&&!x.busy);
+    p[type]=p[type]||[];const i=p[type].findIndex(x=>x.id===e.id);if(i>=0)p[type][i]=e;else p[type].push(e);
+    const kept=new Set(e.files.map(x=>x.id));const drop=[...orig].filter(x=>!kept.has(x));
+    S.sheetCleanup=null;touch(S.cur);closeSheet();renderMain();
+    drop.forEach(fid=>{try{S.assets&&S.assets.delete(fid);}catch(z){}});});
+  const del=f.querySelector("#rdel");
+  if(del)del.addEventListener("click",()=>{if(!del.classList.contains("armed")){del.classList.add("armed");del.textContent="Click again to delete";setTimeout(()=>{if(del.isConnected){del.classList.remove("armed");del.textContent="Delete entry";}},3500);return;}
+    p[type]=(p[type]||[]).filter(x=>x.id!==e.id);const all=new Set([...orig,...fresh]);S.sheetCleanup=null;touch(S.cur);closeSheet();renderMain();
+    all.forEach(fid=>{try{S.assets&&S.assets.delete(fid);}catch(z){}});});
+  setTimeout(()=>{const i=f.querySelector(type==="rad"?"#r_study":"#r_specimen");if(i)i.focus();},0);}
+
+function lightbox(id){
+  const d=document.createElement("div");d.className="lbox";d.tabIndex=-1;
+  d.innerHTML=`<img${fileSrc(id)?` src="${esc(fileSrc(id))}"`:""} data-fsrc="${esc(id)}" alt="Full-size image"><button class="btn small" type="button">Close</button>`;
+  const close=()=>{d.remove();document.removeEventListener("keydown",k,true);};const k=ev=>{if(ev.key==="Escape"){ev.stopPropagation();close();}};
+  d.addEventListener("click",close);document.addEventListener("keydown",k,true);document.body.appendChild(d);d.focus();}
+
+main.addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-rep-add],[data-rep-edit],[data-lightbox]");if(!t)return;
+  if(t.dataset.lightbox){ev.preventDefault();return lightbox(t.dataset.lightbox);}
+  if(t.dataset.repAdd)return repSheet(t.dataset.repAdd,null);
+  if(t.dataset.repEdit){const [ty,id]=t.dataset.repEdit.split(":");return repSheet(ty,id);}});
+
+/* ---------- To chase ---------- */
+const CCATS=["Bloods","Culture / micro","Biopsy / pathology","Imaging","Referral / review","Procedure","Other"];
+function patientById(id){return isEx(id)?(S.examples||{})[id]:S.patients[id];}
+function autoChase(p){const out=[];
+  for(const type of ["micro","path","rad"])for(const e of (p[type]||[]))if(!/final|reported/i.test(e.status||"")){
+    const what=type==="rad"?((e.modality?e.modality+" · ":"")+(e.study||"Imaging")):((e.specimen||"Specimen")+(e.test?" · "+e.test:""));
+    out.push({auto:true,type,id:e.id,cat:type==="micro"?"Culture / micro":type==="path"?"Biopsy / pathology":"Imaging",text:what,status:e.status||"Pending",dt:e.dt});}
+  return out;}
+function chaseCount(p){return (p.chase||[]).filter(c=>!c.done).length+autoChase(p).length;}
+function dueOf(c){if(!c.due)return null;const d=new Date(c.due);if(isNaN(d))return null;const n=new Date();
+  const same=d.toDateString()===n.toDateString();const f=fmtDT(c.due);
+  return{over:d<n,today:same,label:(d<n?"overdue · ":same?"today ":"due ")+(same?"":f.d+" ")+(f.t&&f.t!=="00:00"?f.t:"")};}
+function chaseItems(p,pid){
+  const open=(p.chase||[]).filter(c=>!c.done).sort((a,b)=>{const da=a.due||"9999",db=b.due||"9999";return da<db?-1:da>db?1:(a.created<b.created?-1:1);});
+  let h=open.map(c=>{const d=dueOf(c);return`<li class="citem${d&&d.over?" over":""}"><button class="cbox" type="button" data-cdone="${esc(pid)}|${esc(c.id)}" aria-label="Mark done: ${esc(c.text)}"></button><span class="ccat">${esc(c.cat||"Other")}</span><span class="ctext">${esc(c.text)}</span>${d?`<span class="cdue${d.today?" today":""}">${esc(d.label.trim())}</span>`:`<span class="cdue"></span>`}<button class="rmrow" type="button" data-cdel="${esc(pid)}|${esc(c.id)}" aria-label="Delete">✕</button></li>`;}).join("");
+  h+=autoChase(p).map(a=>{const f=fmtDT(a.dt);return`<li class="citem auto"><span class="cbox dash" aria-hidden="true"></span><span class="ccat">${esc(a.cat)}</span><span class="ctext">${esc(a.text)}<em>${esc(a.status.toLowerCase())} · sent ${esc(f.d)}</em></span><span class="cdue"></span><button class="linkbtn" type="button" data-cgo="${esc(pid)}|${a.type}|${esc(a.id)}">Add result</button></li>`;}).join("");
+  return h;}
+function chaseHTML(p,pid,compact){
+  const open=(p.chase||[]).filter(c=>!c.done);const auto=autoChase(p);const n=open.length+auto.length;
+  const over=open.filter(c=>{const d=dueOf(c);return d&&d.over;}).length;
+  const done=(p.chase||[]).filter(c=>c.done).sort((a,b)=>(a.doneAt||"")<(b.doneAt||"")?1:-1);
+  let h=`<section class="chase" aria-label="To chase"><div class="chead"><h3>To chase</h3><span class="ccount">${n} open</span>${over?`<span class="cover">${over} overdue</span>`:""}</div>`;
+  h+=n?`<ul class="clist">${chaseItems(p,pid)}</ul>`:`<p class="cnone">Nothing to chase. Add results, reports or reviews you're waiting on.</p>`;
+  h+=`<form class="cadd" id="chaseForm" data-pid="${esc(pid)}"><select id="c_cat" aria-label="Type">${CCATS.map(c=>`<option>${esc(c)}</option>`).join("")}</select><input id="c_text" autocomplete="off" placeholder="What to chase, e.g. blood culture final result, CT report, histology" aria-label="What to chase"><input id="c_due" type="datetime-local" aria-label="Due by (optional)" title="Due by (optional)"><button class="btn primary small" type="submit">Add</button></form>`;
+  if(done.length)h+=`<details class="cdone"><summary>Done (${done.length})</summary><ul class="clist">${done.map(c=>{const f=c.doneAt?fmtDT(c.doneAt):null;return`<li class="citem done"><button class="cbox on" type="button" data-cundo="${esc(pid)}|${esc(c.id)}" aria-label="Mark not done">✓</button><span class="ccat">${esc(c.cat||"Other")}</span><span class="ctext">${esc(c.text)}</span><span class="cdue">${f?"done "+esc(f.d):""}</span><button class="rmrow" type="button" data-cdel="${esc(pid)}|${esc(c.id)}" aria-label="Delete">✕</button></li>`;}).join("")}</ul><button class="linkbtn" type="button" data-cclear="${esc(pid)}">Clear done</button></details>`;
+  return h+`</section>`;}
+function renderChaseAll(m){
+  const list=ordered().length?ordered().filter(x=>stOf(x[1])!=="deceased"):Object.entries(S.examples||{});
+  let total=0,over=0;let g="";
+  for(const [id,p] of list){const n=chaseCount(p);if(!n)continue;total+=n;
+    over+=(p.chase||[]).filter(c=>!c.done&&dueOf(c)&&dueOf(c).over).length;
+    g+=`<div class="cgroup"><h4><button type="button" data-open="${esc(id)}">${esc(p.name||"Unnamed patient")}</button>${stOf(p)==="discharged"?` <span class="stp pend">discharged</span>`:""}${p.ward?` <span class="ccount" style="font-weight:400;font-family:var(--mono);font-size:12px;color:var(--muted)">${esc(p.ward)}</span>`:""}</h4><ul class="clist">${chaseItems(p,id)}</ul></div>`;}
+  m.innerHTML=`${ordered().length?"":`<div class="banner">Showing the example patients' chase items.</div>`}<section class="chase"><div class="chead"><h3>Ward chase list</h3><span class="ccount">${total} open across ${list.filter(([i,p])=>chaseCount(p)).length} patients</span>${over?`<span class="cover">${over} overdue</span>`:""}</div>${g||`<p class="cnone">Nothing to chase on the ward.</p>`}<p class="cnone" style="font-size:12.5px">Tick items here or on each patient. Pending cultures, pathology and imaging appear automatically until marked Final or Reported.</p></section>`;}
+function chaseAct(ev){
+  const t=ev.target.closest("[data-cdone],[data-cundo],[data-cdel],[data-cclear],[data-cgo],[data-open]");if(!t)return;
+  if(t.dataset.open){S.cur=t.dataset.open;S.view="patient";const op=patientById(S.cur);S.tab=isEx(S.cur)?"active":stOf(op);renderAll();window.scrollTo(0,0);return;}
+  const [pid,a,b]=(t.dataset.cdone||t.dataset.cundo||t.dataset.cdel||t.dataset.cclear||t.dataset.cgo).split("|");const p=patientById(pid);if(!p)return;
+  if(t.dataset.cgo){S.cur=pid;S.view="patient";S.tab=isEx(pid)?"active":stOf(p);renderAll();return repSheet(a,b);}
+  if(t.dataset.cclear){p.chase=(p.chase||[]).filter(c=>!c.done);}
+  else{const c=(p.chase||[]).find(x=>x.id===a);if(!c)return;
+    if(t.dataset.cdone){c.done=true;c.doneAt=nowLocal();}
+    else if(t.dataset.cundo){c.done=false;delete c.doneAt;}
+    else if(t.dataset.cdel){if(!t.classList.contains("armed")){t.classList.add("armed");t.textContent="Delete?";setTimeout(()=>{if(t.isConnected){t.classList.remove("armed");t.textContent="✕";}},3000);return;}
+      p.chase=p.chase.filter(x=>x.id!==a);}}
+  touch(pid);renderAll();}
+main.addEventListener("click",chaseAct);
+main.addEventListener("submit",ev=>{const f=ev.target;if(f.id!=="chaseForm")return;ev.preventDefault();
+  const pid=f.dataset.pid;const p=patientById(pid);if(!p)return;const txt=f.querySelector("#c_text").value.trim();if(!txt){f.querySelector("#c_text").focus();return;}
+  p.chase=p.chase||[];p.chase.push({id:uid().slice(0,12),cat:f.querySelector("#c_cat").value,text:txt.slice(0,300),due:f.querySelector("#c_due").value||"",done:false,created:nowLocal()});
+  touch(pid);renderAll();setTimeout(()=>{const i=document.getElementById("c_text");if(i)i.focus();},0);});
+
+/* ---------- Supabase mode (GitHub + Supabase deployment) ----------
+   Used only when config.js provides SUPABASE_URL and SUPABASE_ANON_KEY.
+   Each patient is one JSON document; edits are sent as small patches so
+   two people editing the same patient don't overwrite each other. */
+const CFG=Object.assign({SUPABASE_URL:"",SUPABASE_ANON_KEY:"",IDLE_MINUTES:15,BUCKET:"ward-files"},window.WB_CONFIG||{});
+const SB={client:null,team:null,teamName:"",snap:{},urls:{},wantUrl:new Set(),urlT:null,pullT:{},pullAfter:{}};
+const clone=o=>o===undefined?undefined:JSON.parse(JSON.stringify(o));
+const isObj=x=>!!x&&typeof x==="object"&&!Array.isArray(x);
+const keyOf=e=>isObj(e)?(e.id!=null?String(e.id):e.k!=null?String(e.k):null):null;
+const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+function diffDoc(a,b,path,ops){path=path||[];ops=ops||[];
+  if(isObj(a)&&isObj(b)){
+    for(const k of Object.keys(b)){if(!(k in a))ops.push({op:"set",path:[...path,k],value:b[k]});else diffDoc(a[k],b[k],[...path,k],ops);}
+    for(const k of Object.keys(a))if(!(k in b))ops.push({op:"del",path:[...path,k]});
+    return ops;}
+  const idArr=x=>Array.isArray(x)&&x.every(e=>keyOf(e)!=null);
+  if(idArr(a)&&idArr(b)&&!same(a,b)){
+    const am=new Map(a.map(e=>[keyOf(e),e])),bm=new Map(b.map(e=>[keyOf(e),e]));
+    for(const [k,e] of bm)if(!am.has(k)||!same(am.get(k),e))ops.push({op:"upsert",path,item:e});
+    for(const k of am.keys())if(!bm.has(k))ops.push({op:"remove",path,id:k});
+    return ops;}
+  if(!same(a,b))ops.push({op:"set",path,value:b===undefined?null:b});
+  return ops;}
+function setDeep(t,p,v){if(!p.length)return v;const o=isObj(t)?t:{};o[p[0]]=setDeep(o[p[0]],p.slice(1),v);return o;}
+function getDeep(t,p){return p.reduce((x,k)=>x==null?undefined:x[k],t);}
+function applyOps(doc,ops){let d=clone(doc)||{};
+  for(const o of ops){
+    if(o.op==="set")d=setDeep(d,o.path,clone(o.value));
+    else if(o.op==="del"){const par=getDeep(d,o.path.slice(0,-1));if(isObj(par))delete par[o.path[o.path.length-1]];}
+    else{let arr=getDeep(d,o.path);arr=Array.isArray(arr)?arr:[];const id=o.op==="upsert"?keyOf(o.item):String(o.id);
+      arr=arr.filter(e=>keyOf(e)!==id);if(o.op==="upsert")arr.push(clone(o.item));d=setDeep(d,o.path,arr);}}
+  return d;}
+function replaceInPlace(obj,src){for(const k of Object.keys(obj))delete obj[k];Object.assign(obj,clone(src));}
+function afterSync(id,before){renderSidebar();refreshStatus();
+  if(id===S.cur&&before!==JSON.stringify(S.patients[id])&&!main.contains(document.activeElement)&&!document.querySelector(".sheet"))renderMain();}
+
+async function sbFlush(id){
+  if(S.writing[id]){S.again[id]=true;return;}
+  const p=S.patients[id];if(!p){S.dirty.delete(id);refreshStatus();return;}
+  S.writing[id]=true;const sent=clone(p);const before=JSON.stringify(p);let server;
+  try{
+    if(!SB.snap[id]){
+      const {data,error}=await SB.client.from("patients").insert({id,team_id:SB.team,doc:sent}).select("doc").single();
+      if(error)throw error;server=data.doc;}
+    else{const ops=diffDoc(SB.snap[id],sent);
+      if(ops.length){const {data,error}=await SB.client.rpc("patch_patient",{p_id:id,p_ops:ops});if(error)throw error;server=data;}
+      else server=SB.snap[id];}}
+  catch(e){console.warn(e);S.writing[id]=false;setStatus("local","Couldn't save ("+(e&&e.message||"connection")+"). Retrying…");
+    setTimeout(()=>flush(id),5000);return;}
+  const extra=diffDoc(sent,clone(p));
+  SB.snap[id]=clone(server);replaceInPlace(p,extra.length?applyOps(server,extra):server);
+  S.writing[id]=false;
+  if(S.again[id]||extra.length){S.again[id]=false;return sbFlush(id);}
+  S.dirty.delete(id);
+  if(SB.pullAfter[id]){SB.pullAfter[id]=false;queuePull(id);}
+  afterSync(id,before);}
+
+function queuePull(id){clearTimeout(SB.pullT[id]);SB.pullT[id]=setTimeout(()=>sbPull(id),250);}
+async function sbPull(id){
+  if(S.writing[id]){SB.pullAfter[id]=true;return;}
+  const {data,error}=await SB.client.from("patients").select("id,doc,discharged_at").eq("id",id).maybeSingle();
+  if(error){console.warn(error);return;}
+  const p=S.patients[id];const before=p?JSON.stringify(p):null;
+  if(!data||data.discharged_at){if(p&&!S.dirty.has(id)){delete S.patients[id];delete SB.snap[id];
+      if(S.cur===id){const l=ordered();if(l.length)S.cur=l[0][0];else showExamples();renderAll();return;}}
+    renderSidebar();return;}
+  if(!p){S.patients[id]=clone(data.doc);SB.snap[id]=clone(data.doc);
+    if(isEx(S.cur)){S.examples=null;S.cur=id;renderAll();return;}renderSidebar();return;}
+  const pending=S.dirty.has(id)?diffDoc(SB.snap[id]||{},clone(p)):[];
+  SB.snap[id]=clone(data.doc);replaceInPlace(p,pending.length?applyOps(data.doc,pending):data.doc);
+  afterSync(id,before);}
+
+async function sbDelete(id,p){
+  const files=[];
+  for(const t of ["micro","path","rad"])for(const e of ((p&&p[t])||[]))for(const f of (e.files||[]))if(f.id)files.push(f.id);
+  if(files.length){try{await SB.client.storage.from(CFG.BUCKET).remove(files);}catch(e){console.warn(e);}}
+  const {error}=await SB.client.from("patients").delete().eq("id",id);
+  if(error){console.warn(error);setStatus("local","Couldn't delete: "+error.message);}
+  delete SB.snap[id];}
+
+const MIME_EXT={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/gif":"gif","application/pdf":"pdf"};
+const sbAssets={
+  async upload(blob,opts){const type=(opts&&opts.type)||blob.type;const pid=S.cur;
+    const path=SB.team+"/"+pid+"/"+uid()+"."+(MIME_EXT[type]||"bin");
+    const {error}=await SB.client.storage.from(CFG.BUCKET).upload(path,blob,{contentType:type,upsert:false,cacheControl:"3600"});
+    if(error)throw{code:/size|large|exceed/i.test(error.message)?"too_large":/mime|type/i.test(error.message)?"unsupported_type":"upstream_error",message:error.message};
+    return{id:path,url:"",sizeBytes:blob.size,contentType:type};},
+  async delete(id){try{await SB.client.storage.from(CFG.BUCKET).remove([id]);}catch(e){}return{deleted:true};}};
+function fileSrc(id){
+  if(S.mode!=="supabase")return"/_blob/"+id;
+  const u=SB.urls[id];if(u&&u.exp>Date.now())return u.url;
+  SB.wantUrl.add(id);clearTimeout(SB.urlT);SB.urlT=setTimeout(fetchUrls,20);return"";}
+async function fetchUrls(){const ids=[...SB.wantUrl];SB.wantUrl.clear();if(!ids.length||!SB.client)return;
+  const {data,error}=await SB.client.storage.from(CFG.BUCKET).createSignedUrls(ids,3600);if(error){console.warn(error);return;}
+  for(const r of (data||[])){if(!r.signedUrl)continue;SB.urls[r.path]={url:r.signedUrl,exp:Date.now()+3300e3};
+    document.querySelectorAll('[data-fsrc="'+CSS.escape(r.path)+'"]').forEach(el=>{if(el.tagName==="A")el.href=r.signedUrl;else el.src=r.signedUrl;});}}
+
+/* login gate */
+function loadScript(src,integrity){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;if(integrity){s.integrity=integrity;s.crossOrigin="anonymous";}s.onload=res;s.onerror=()=>rej(new Error("Couldn't load the Supabase library. Check your connection."));document.head.appendChild(s);});}
+const GATE_CSS=`.wbg{position:fixed;inset:0;z-index:100;background:var(--bg);display:grid;place-items:center;padding:24px 16px;overflow:auto}
+.wbg form{width:min(380px,100%);background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:24px;display:flex;flex-direction:column;gap:12px}
+.wbg h2{margin:0;font-size:20px}.wbg p{margin:0;color:var(--muted);font-size:13.5px}
+.wbg label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
+.wbg input{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:10px 12px;font:inherit;font-size:15px}
+.wbg button{border:0;border-radius:8px;padding:11px 14px;font:inherit;font-weight:600;background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.wbg button.ghost{background:none;color:var(--muted);font-weight:400;padding:4px}
+.wbg .err{color:var(--hi);font-size:13px;min-height:1em}.wbg img{width:180px;height:180px;align-self:center;background:#fff;border-radius:8px;padding:6px}
+.wbg code{font-size:12px;word-break:break-all;background:var(--bg);padding:6px 8px;border-radius:6px}`;
+function gate(html,onSubmit){
+  let g=document.getElementById("wbgate");
+  if(!g){const st=document.createElement("style");st.textContent=GATE_CSS;document.head.appendChild(st);g=document.createElement("div");g.id="wbgate";g.className="wbg";document.body.appendChild(g);}
+  g.hidden=false;g.innerHTML=`<form novalidate>${html}<div class="err" role="alert"></div></form>`;
+  const f=g.querySelector("form"),er=f.querySelector(".err");
+  f.addEventListener("submit",async ev=>{ev.preventDefault();er.textContent="";const b=f.querySelector("button[type=submit]");if(b)b.disabled=true;
+    try{await onSubmit(f);}catch(x){er.textContent=x&&x.message?x.message:String(x);}finally{if(b)b.disabled=false;}});
+  f.querySelectorAll("[data-signout]").forEach(b=>b.addEventListener("click",()=>sbSignOut()));
+  const first=f.querySelector("input");if(first)first.focus();}
+function hideGate(){const g=document.getElementById("wbgate");if(g)g.hidden=true;}
+async function authFlow(){
+  const sb=SB.client;const {data:{session}}=await sb.auth.getSession();
+  if(!session)return new Promise(res=>gate(`<h2>Ward Bloods</h2><p>Sign in with the account your admin created.</p>
+    <label>Email<input id="wb_email" type="email" autocomplete="username" required></label>
+    <label>Password<input id="wb_pw" type="password" autocomplete="current-password" required></label>
+    <button type="submit">Sign in</button>`,async f=>{
+      const {error}=await sb.auth.signInWithPassword({email:f.wb_email.value.trim(),password:f.wb_pw.value});
+      if(error)throw new Error("Email or password not recognised.");res(authFlow());}));
+  const {data:aal}=await sb.auth.mfa.getAuthenticatorAssuranceLevel();
+  if(aal&&aal.currentLevel==="aal2")return true;
+  const {data:fs}=await sb.auth.mfa.listFactors();
+  const totp=((fs&&fs.totp)||[]).find(x=>x.status==="verified");
+  if(totp)return new Promise(res=>gate(`<h2>Two-step check</h2><p>Enter the 6-digit code from your authenticator app.</p>
+    <label>Code<input id="wb_code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required></label>
+    <button type="submit">Verify</button><button type="button" class="ghost" data-signout>Sign out</button>`,async f=>{
+      const {error}=await sb.auth.mfa.challengeAndVerify({factorId:totp.id,code:f.wb_code.value.trim()});
+      if(error)throw new Error("That code didn't match. Check your app and try again.");res(true);}));
+  for(const u of ((fs&&fs.all)||[]).filter(x=>x.status!=="verified"))await sb.auth.mfa.unenroll({factorId:u.id});
+  const {data:en,error:ee}=await sb.auth.mfa.enroll({factorType:"totp",friendlyName:"Ward Bloods"});if(ee)throw ee;
+  return new Promise(res=>gate(`<h2>Set up two-step login</h2><p>Scan this with an authenticator app (Google Authenticator, Microsoft Authenticator or Authy), then enter the 6-digit code.</p>
+    <img alt="QR code for your authenticator app" src="${en.totp.qr_code}"><p>Can't scan? Enter this key:</p><code>${esc(en.totp.secret)}</code>
+    <label>Code<input id="wb_code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required></label>
+    <button type="submit">Turn on and continue</button><button type="button" class="ghost" data-signout>Sign out</button>`,async f=>{
+      const {error}=await sb.auth.mfa.challengeAndVerify({factorId:en.id,code:f.wb_code.value.trim()});
+      if(error)throw new Error("That code didn't match. Codes change every 30 seconds.");res(true);}));}
+async function sbSignOut(){try{await SB.client.auth.signOut();}catch(e){}try{sessionStorage.clear();}catch(e){}document.body.innerHTML="";location.reload();}
+async function bootSupabase(){
+  S.mode="supabase";setStatus("busy","Connecting…");
+  try{
+    if(!(window.supabase&&window.supabase.createClient))await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js","sha384-0w2KAL2YHP6wKOkUDzkCDGgVvfmHnj02DHeQ6XcHOgTfFsGyonKOpShMH1x6nk9o");
+    SB.client=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY,{auth:{persistSession:true,storage:window.sessionStorage}});
+    await authFlow();
+    const {data:tm,error:te}=await SB.client.from("team_members").select("team_id, teams(name)").limit(1);if(te)throw te;
+    if(!tm||!tm.length){gate(`<h2>Not in a team yet</h2><p>Your login works, but your admin hasn't added you to a team yet. Ask them to run the "add member" step in the setup guide.</p><button type="button" data-signout>Sign out</button>`,async()=>{});return;}
+    SB.team=tm[0].team_id;SB.teamName=(tm[0].teams&&tm[0].teams.name)||"team";hideGate();
+    const {data:rows,error:pe}=await SB.client.from("patients").select("id,doc").is("discharged_at",null);if(pe)throw pe;
+    for(const r of rows){S.patients[r.id]=clone(r.doc);SB.snap[r.id]=clone(r.doc);}
+    SB.client.channel("wb-"+SB.team).on("postgres_changes",{event:"*",schema:"public",table:"patients"},pl=>{const id=(pl.new&&pl.new.id)||(pl.old&&pl.old.id);if(id)queuePull(id);}).subscribe();
+    S.assets=sbAssets;
+    const so=document.getElementById("signOut");if(so){so.hidden=false;so.addEventListener("click",sbSignOut);}
+    const mins=Number(CFG.IDLE_MINUTES)||15;let it=null;const reset=()=>{clearTimeout(it);it=setTimeout(sbSignOut,mins*60000);};
+    ["pointerdown","keydown","touchstart","scroll"].forEach(ev=>window.addEventListener(ev,reset,{passive:true}));reset();
+    afterLoad();}
+  catch(e){console.error(e);gate(`<h2>Can't connect</h2><p>${esc(e&&e.message||e)}</p><button type="submit">Try again</button>`,async()=>location.reload());}}
+
+/* ---------- Discharge / deceased / readmit ---------- */
+function openItems(p){const o=(p.chase||[]).filter(c=>!c.done).map(c=>c.text);autoChase(p).forEach(a=>o.push(a.text+" ("+a.status.toLowerCase()+")"));return o;}
+main.addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-st],[data-stgo],[data-stno]");if(!t)return;const p=current();if(!p||isEx(S.cur))return;
+  const box=document.getElementById("stconf");
+  if(t.dataset.stno!=null){if(box)box.innerHTML="";return;}
+  const act=t.dataset.st||t.dataset.stgo;
+  if(t.dataset.st&&(act==="discharge"||act==="deceased")){
+    const open=openItems(p);
+    box.innerHTML=`<div class="stconf ${act}"><h4>${act==="discharge"?"Discharge "+esc(p.name||"patient"):"Mark "+esc(p.name||"patient")+" as deceased"}</h4>
+      <label class="field"><span>${act==="discharge"?"Discharged":"Date and time of death"}</span><input type="datetime-local" id="st_dt" value="${nowLocal()}"></label>
+      ${act==="discharge"&&open.length?`<div class="stwarn"><b>${open.length} still open.</b> Hand these over, or keep chasing them from the Discharged tab (they stay on the ward chase list):<ul>${open.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>`:""}
+      <p class="shint">${act==="discharge"?"The patient moves to the Discharged tab with all results, reports and images. Use Readmit if they come back.":"The patient moves to the Deceased tab. Nothing is deleted."}</p>
+      <div class="stbtns"><button class="btn" type="button" data-stno>Cancel</button><button class="btn primary" type="button" data-stgo="${act}">${act==="discharge"?"Discharge":"Mark deceased"}</button></div></div>`;
+    box.scrollIntoView({block:"nearest",behavior:"smooth"});return;}
+  const dtIn=document.getElementById("st_dt");const when=(dtIn&&dtIn.value)||nowLocal();
+  if(act==="discharge"){p.status="discharged";p.dischargedAt=when;}
+  else if(act==="deceased"){p.status="deceased";p.diedAt=when;delete p.dischargedAt;}
+  else if(act==="readmit"){p.readmissions=(p.readmissions||[]).concat([{discharged:p.dischargedAt||"",readmitted:nowLocal()}]);
+    p.status="active";delete p.dischargedAt;p.admitted=nowLocal().slice(0,10);
+    p.notes=p.notes||[];p.notes.push({id:uid().slice(0,12),dt:nowLocal(),text:"Readmitted. Previous results kept above."});}
+  else if(act==="reactivate"){p.status="active";delete p.diedAt;}
+  else return;
+  S.tab=stOf(p);touch(S.cur);renderAll();window.scrollTo(0,0);});
+
+/* ---------- Boot ---------- */
+function useLocal(){
+  const saved=lsGet(LS_KEY);let ok=lsSet("wardbloods.probe",1);
+  S.mode=ok?"local":"memory";S.patients=saved&&typeof saved==="object"?saved:{};
+  afterLoad();}
+function afterLoad(){
+  S.loaded=true;
+  for(const [id,p] of Object.entries(S.patients)){if(p&&(p.mrn||p.dob)){if(!p.age&&p.dob)p.age=age(p.dob).replace("y","");delete p.mrn;delete p.dob;touch(id);}}const list=ordered();
+  if(!list.length)showExamples();
+  else if(!S.patients[S.cur])S.cur=list[0][0];
+  renderAll();}
+
+renderAll();
+(async function boot(){
+  if(CFG.SUPABASE_URL&&CFG.SUPABASE_ANON_KEY)return bootSupabase();
+  if(!window.claude||!window.claude.use)return useLocal();
+  let db=null,user=null;
+  try{[db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);}catch(e){}
+  let me=null;try{me=user&&user.id?await user.id():null;}catch(e){}
+  if(!db||!me)return useLocal();
+  try{S.col=db.collection("data/users/"+me);}catch(e){return useLocal();}
+  S.db=db;S.mode="cloud";let first=true;
+  window.claude.use("assets").then(a=>{S.assets=a;if(document.getElementById("rsheet")==null)renderMain();}).catch(()=>{});
+  S.col.onSnapshot(snap=>{
+    const before=S.cur&&S.patients[S.cur]?JSON.stringify(S.patients[S.cur]):null;
+    const seen=new Set();
+    for(const d of snap.docs){seen.add(d.id);if(S.dirty.has(d.id)||S.writing[d.id])continue;S.patients[d.id]=JSON.parse(JSON.stringify(d.data()));}
+    for(const id of Object.keys(S.patients))if(!seen.has(id)&&!S.dirty.has(id)&&!S.writing[id]&&!snap.metadata.fromCache)delete S.patients[id];
+    if(first){first=false;
+      /* carry over anything saved on this device before sign-in */
+      const local=lsGet(LS_KEY);if(local&&!snap.size&&Object.keys(local).length){for(const [id,p] of Object.entries(local)){S.patients[id]=p;touch(id);}}
+      afterLoad();return;}
+    if(ordered().length&&isEx(S.cur)){S.examples=null;S.cur=ordered()[0][0];renderAll();return;}
+    renderSidebar();
+    const after=S.cur&&S.patients[S.cur]?JSON.stringify(S.patients[S.cur]):null;
+    if(before!==after&&!main.contains(document.activeElement))renderMain();
+    if(S.cur&&!isEx(S.cur)&&!S.patients[S.cur]){const l=ordered();if(l.length)S.cur=l[0][0];else showExamples();renderAll();}
+  },err=>{console.warn(err);setStatus("local","Sync stopped. Reload the page.");});
+})();
+})();
+</script>
+
+</body>
+</html>
