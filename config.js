@@ -3,6 +3,6 @@
 // Use the "anon public" key ONLY. Never paste the secret (service) key here.
 window.WB_CONFIG = {
   SUPABASE_URL: "https://ecelirutxjoirkboxccn.supabase.co/rest/v1/",
-  SUPABASE_ANON_KEY: "sb_publishable_vbvZINXHZcLCJKTnyiSs6w_C4672y0O",
+  SUPABASE_ANON_KEY: "https://ecelirutxjoirkboxccn.supabase.co",
   IDLE_MINUTES: 15   // signs out after this many minutes without activity
 };
