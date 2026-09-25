@@ -291,7 +291,7 @@ td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color
     <button class="btn chasebtn" id="chaseAll" type="button" aria-current="false"><span>Ward chase list</span><span class="n" id="chaseN">0</span></button>
     <div class="stabs" id="stabs" role="tablist" aria-label="Patient lists"></div>
     <ul class="plist" id="plist"></ul>
-    <div class="status" id="status"><span class="dot"></span><span id="statusText">Loading…</span><button class="linkbtn" type="button" id="signOut" hidden style="margin-left:auto">Sign out</button></div>
+    <div class="status" id="status"><span class="dot"></span><span id="statusText">Loading…</span><button class="linkbtn" type="button" id="signOut" hidden style="margin-left:auto">Lock</button></div>
   </aside>
   <main class="main" id="main"></main>
 </div>
@@ -1126,43 +1126,33 @@ function gate(html,onSubmit){
   f.addEventListener("submit",async ev=>{ev.preventDefault();er.textContent="";const b=f.querySelector("button[type=submit]");if(b)b.disabled=true;
     try{await onSubmit(f);}catch(x){er.textContent=x&&x.message?x.message:String(x);}finally{if(b)b.disabled=false;}});
   f.querySelectorAll("[data-signout]").forEach(b=>b.addEventListener("click",()=>sbSignOut()));
+  const pin=f.querySelector("#wb_pin");if(pin)pin.addEventListener("input",()=>{pin.value=pin.value.replace(/\D/g,"").slice(0,6);if(pin.value.length===6)f.requestSubmit();});
   const first=f.querySelector("input");if(first)first.focus();}
 function hideGate(){const g=document.getElementById("wbgate");if(g)g.hidden=true;}
 async function authFlow(){
-  const sb=SB.client;const {data:{session}}=await sb.auth.getSession();
-  if(!session)return new Promise(res=>gate(`<h2>Ward Bloods</h2><p>Sign in with the account your admin created.</p>
-    <label>Email<input id="wb_email" type="email" autocomplete="username" required></label>
-    <label>Password<input id="wb_pw" type="password" autocomplete="current-password" required></label>
-    <button type="submit">Sign in</button>`,async f=>{
-      const {error}=await sb.auth.signInWithPassword({email:f.wb_email.value.trim(),password:f.wb_pw.value});
-      if(error)throw new Error("Email or password not recognised.");res(authFlow());}));
-  const {data:aal}=await sb.auth.mfa.getAuthenticatorAssuranceLevel();
-  if(aal&&aal.currentLevel==="aal2")return true;
-  const {data:fs}=await sb.auth.mfa.listFactors();
-  const totp=((fs&&fs.totp)||[]).find(x=>x.status==="verified");
-  if(totp)return new Promise(res=>gate(`<h2>Two-step check</h2><p>Enter the 6-digit code from your authenticator app.</p>
-    <label>Code<input id="wb_code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required></label>
-    <button type="submit">Verify</button><button type="button" class="ghost" data-signout>Sign out</button>`,async f=>{
-      const {error}=await sb.auth.mfa.challengeAndVerify({factorId:totp.id,code:f.wb_code.value.trim()});
-      if(error)throw new Error("That code didn't match. Check your app and try again.");res(true);}));
-  for(const u of ((fs&&fs.all)||[]).filter(x=>x.status!=="verified"))await sb.auth.mfa.unenroll({factorId:u.id});
-  const {data:en,error:ee}=await sb.auth.mfa.enroll({factorType:"totp",friendlyName:"Ward Bloods"});if(ee)throw ee;
-  return new Promise(res=>gate(`<h2>Set up two-step login</h2><p>Scan this with an authenticator app (Google Authenticator, Microsoft Authenticator or Authy), then enter the 6-digit code.</p>
-    <img alt="QR code for your authenticator app" src="${en.totp.qr_code}"><p>Can't scan? Enter this key:</p><code>${esc(en.totp.secret)}</code>
-    <label>Code<input id="wb_code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required></label>
-    <button type="submit">Turn on and continue</button><button type="button" class="ghost" data-signout>Sign out</button>`,async f=>{
-      const {error}=await sb.auth.mfa.challengeAndVerify({factorId:en.id,code:f.wb_code.value.trim()});
-      if(error)throw new Error("That code didn't match. Codes change every 30 seconds.");res(true);}));}
-async function sbSignOut(){try{await SB.client.auth.signOut();}catch(e){}try{sessionStorage.clear();}catch(e){}document.body.innerHTML="";location.reload();}
+  const sb=SB.client;
+  const {data:{session}}=await sb.auth.getSession();
+  if(!session){const {error}=await sb.auth.signInAnonymously();
+    if(error){const m=String(error.message||"");
+      if(/anonymous/i.test(m))throw new Error("PIN sign-in is turned off in Supabase. Go to Authentication → Sign In / Providers and turn on “Allow anonymous sign-ins”.");
+      if(/api ?key|jwt|invalid/i.test(m))throw new Error("The Supabase key in config.js isn't accepted. Copy the anon public key again from Project Settings → API.");
+      throw new Error("Couldn't connect: "+m);}}
+  return new Promise(res=>gate(`<h2>Ward Bloods</h2><p>Enter the team PIN.</p>
+    <label>PIN<input id="wb_pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="6" required style="letter-spacing:.5em;font-size:24px;text-align:center"></label>
+    <button type="submit">Unlock</button>`,async f=>{
+      const v=f.wb_pin.value.trim();
+      const {data,error}=await sb.rpc("join_with_pin",{p_pin:v});
+      if(error)throw new Error(/function|schema cache|does not exist/i.test(error.message)?"The database isn't set up for PIN sign-in yet. Run the new schema.sql in Supabase.":"Couldn't check the PIN: "+error.message);
+      if(!data||!data.ok){f.wb_pin.value="";f.wb_pin.focus();throw new Error((data&&data.error)||"Wrong PIN.");}
+      res({team_id:data.team_id,team_name:data.team_name});}));}
+async function sbSignOut(){document.body.innerHTML="";location.reload();}
 async function bootSupabase(){
   S.mode="supabase";setStatus("busy","Connecting…");
   try{
     if(!(window.supabase&&window.supabase.createClient))await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js","sha384-0w2KAL2YHP6wKOkUDzkCDGgVvfmHnj02DHeQ6XcHOgTfFsGyonKOpShMH1x6nk9o");
-    SB.client=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY,{auth:{persistSession:true,storage:window.sessionStorage}});
-    await authFlow();
-    const {data:tm,error:te}=await SB.client.from("team_members").select("team_id, teams(name)").limit(1);if(te)throw te;
-    if(!tm||!tm.length){gate(`<h2>Not in a team yet</h2><p>Your login works, but your admin hasn't added you to a team yet. Ask them to run the "add member" step in the setup guide.</p><button type="button" data-signout>Sign out</button>`,async()=>{});return;}
-    SB.team=tm[0].team_id;SB.teamName=(tm[0].teams&&tm[0].teams.name)||"team";hideGate();
+    SB.client=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY,{auth:{persistSession:true,storage:window.localStorage}});
+    const tm=await authFlow();
+    SB.team=tm.team_id;SB.teamName=tm.team_name||"team";hideGate();
     const {data:rows,error:pe}=await SB.client.from("patients").select("id,doc").is("discharged_at",null);if(pe)throw pe;
     for(const r of rows){S.patients[r.id]=clone(r.doc);SB.snap[r.id]=clone(r.doc);}
     SB.client.channel("wb-"+SB.team).on("postgres_changes",{event:"*",schema:"public",table:"patients"},pl=>{const id=(pl.new&&pl.new.id)||(pl.old&&pl.old.id);if(id)queuePull(id);}).subscribe();
