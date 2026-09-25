@@ -1134,9 +1134,10 @@ async function authFlow(){
   const {data:{session}}=await sb.auth.getSession();
   if(!session){const {error}=await sb.auth.signInAnonymously();
     if(error){const m=String(error.message||"");
-      if(/anonymous/i.test(m))throw new Error("PIN sign-in is turned off in Supabase. Go to Authentication → Sign In / Providers and turn on “Allow anonymous sign-ins”.");
-      if(/api ?key|jwt|invalid/i.test(m))throw new Error("The Supabase key in config.js isn't accepted. Copy the anon public key again from Project Settings → API.");
-      throw new Error("Couldn't connect: "+m);}}
+      if(/anonymous/i.test(m))throw new Error("PIN sign-in is turned off in Supabase. Go to Authentication → Sign In / Providers and turn on “Allow anonymous sign-ins”. (Supabase said: "+m+")");
+      if(/api ?key/i.test(m))throw new Error("Supabase didn't accept the key in config.js. Copy the anon public key again from Project Settings → API. (Supabase said: "+m+")");
+      if(/fetch|network/i.test(m))throw new Error("Couldn't reach Supabase. Check SUPABASE_URL in config.js and your connection. (Error: "+m+")");
+      throw new Error("Couldn't connect. Supabase said: "+m);}}
   return new Promise(res=>gate(`<h2>Ward Bloods</h2><p>Enter the team PIN.</p>
     <label>PIN<input id="wb_pin" type="password" inputmode="numeric" pattern="[0-9]*" autocomplete="off" maxlength="6" required style="letter-spacing:.5em;font-size:24px;text-align:center"></label>
     <button type="submit">Unlock</button>`,async f=>{
@@ -1146,10 +1147,25 @@ async function authFlow(){
       if(!data||!data.ok){f.wb_pin.value="";f.wb_pin.focus();throw new Error((data&&data.error)||"Wrong PIN.");}
       res({team_id:data.team_id,team_name:data.team_name});}));}
 async function sbSignOut(){document.body.innerHTML="";location.reload();}
+function checkConfig(){
+  const url=String(CFG.SUPABASE_URL||"").trim(),key=String(CFG.SUPABASE_ANON_KEY||"").trim();
+  const m=url.match(/^https:\/\/([a-z0-9]{10,40})\.supabase\.co\/?$/);
+  if(!m)return"SUPABASE_URL doesn't look right: \""+esc(url)+"\". It should look like https://abcdefghijkl.supabase.co with nothing after .co.";
+  if(/\s/.test(key))return"The key in config.js contains a space or line break. Paste it again as one unbroken line.";
+  if(key.startsWith("sb_secret_"))return"That's the SECRET key. Never put it in config.js. Use the anon public (or publishable) key, then rotate the secret key in Supabase because it has been exposed.";
+  if(key.startsWith("sb_publishable_"))return"";
+  const parts=key.split(".");
+  if(parts.length!==3||!key.startsWith("eyJ"))return"The key doesn't look complete. It starts \""+esc(key.slice(0,8))+"…\" and is "+key.length+" characters long. The anon key starts with eyJ, has two dots and is about 200+ characters. Use the copy button next to it.";
+  let pl=null;try{pl=JSON.parse(atob(parts[1].replace(/-/g,"+").replace(/_/g,"/")+"===".slice((parts[1].length+3)%4)));}catch(e){return"The key is cut off or has extra characters. Copy it again with the copy button.";}
+  if(pl.role==="service_role")return"That's the service_role (secret) key. Never put it in config.js. Use the anon public key, and rotate the service key in Supabase because it has been exposed.";
+  if(pl.ref&&pl.ref!==m[1])return"The key and the URL are from different projects. The URL is for \""+esc(m[1])+"\" but the key is for \""+esc(pl.ref)+"\". Copy both from the same project's Settings → API page.";
+  return"";}
 async function bootSupabase(){
   S.mode="supabase";setStatus("busy","Connecting…");
+  const bad=checkConfig();
+  if(bad){gate(`<h2>Check config.js</h2><p>${bad}</p><button type="submit">Try again</button>`,async()=>location.reload());return;}
   try{
-    if(!(window.supabase&&window.supabase.createClient))await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js","sha384-0w2KAL2YHP6wKOkUDzkCDGgVvfmHnj02DHeQ6XcHOgTfFsGyonKOpShMH1x6nk9o");
+    if(!(window.supabase&&window.supabase.createClient))await loadScript("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.1/dist/umd/supabase.js","sha384-K1nraABOP/zFehpLIUksXebbs7jMpB8gYMlb+uhVKZcWT/9Vkq1+qhv6ndC+1Yuz");
     SB.client=window.supabase.createClient(CFG.SUPABASE_URL,CFG.SUPABASE_ANON_KEY,{auth:{persistSession:true,storage:window.localStorage}});
     const tm=await authFlow();
     SB.team=tm.team_id;SB.teamName=tm.team_name||"team";hideGate();
