@@ -230,6 +230,15 @@ td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color
 .tadd{display:grid;grid-template-columns:1fr auto;gap:8px}
 .tadd input{border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:8px 10px;min-width:0}
 .tnone{margin:0;font-size:13px;color:var(--muted)}
+.thist summary{cursor:pointer;font-size:13px;color:var(--accent);font-weight:500}
+.tday{margin-top:10px}
+.tday h5{margin:0 0 4px;font-size:13px;font-weight:600}
+.tday h5 span{font-weight:400;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-left:6px}
+.tday ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.tday li{display:grid;grid-template-columns:20px 1fr auto;gap:8px;font-size:13.5px;padding:3px 8px;border-radius:6px}
+.tday li.ok .mk{color:var(--accent);font-weight:700}
+.tday li.no{color:var(--muted)}
+.tday .tm{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
 .chip.pendc{background:var(--warn-bg);color:var(--warn-ink)}
 .chip.cntc{background:var(--surface-2);color:var(--muted)}
 .replist{display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -487,7 +496,9 @@ function makeExamples(){
   c.chase=[{id:"c6",cat:"Procedure",text:"ERCP time from GI team",due:tAt(0,16),done:false,created:tAt(1,12)},
     {id:"c7",cat:"Bloods",text:"INR after vitamin K",done:false,created:tAt(1,12)}];
   const T=todayStr(),Y=tAt(1,8).slice(0,10);
-  a.todo=[{id:"t1",day:T,text:"Repeat U&E",done:true,doneAt:tAt(0,9,15),created:tAt(0,8)},{id:"t2",day:T,text:"Step down to oral antibiotics?",done:false,created:tAt(0,8)},{id:"t3",day:T,text:"Update relatives",done:false,created:tAt(0,8)},{id:"t4",day:Y,text:"Physio referral",done:false,created:tAt(1,8)}];
+  a.todo=[{id:"t1",day:T,text:"Repeat U&E",done:true,doneAt:tAt(0,9,15),created:tAt(0,8)},{id:"t2",day:T,text:"Step down to oral antibiotics?",done:false,created:tAt(0,8)},{id:"t3",day:T,text:"Update relatives",done:false,created:tAt(0,8)},{id:"t4",day:Y,text:"Physio referral",done:false,created:tAt(1,8)},
+    {id:"t9",day:Y,text:"Repeat CXR",done:true,doneAt:tAt(1,11,20),created:tAt(1,8)},{id:"t10",day:Y,text:"Sputum culture sent",done:true,doneAt:tAt(1,9,5),created:tAt(1,8)},
+    {id:"t11",day:tAt(2,8).slice(0,10),text:"Blood cultures x2 before antibiotics",done:true,doneAt:tAt(2,6,30),created:tAt(2,6)}];
   b.todo=[{id:"t5",day:T,text:"VBG 2-hourly while on FRIII",done:false,created:tAt(0,7)},{id:"t6",day:T,text:"Chart KCl",done:true,doneAt:tAt(0,10,40),created:tAt(0,7)}];
   c.todo=[{id:"t7",day:T,text:"Confirm ERCP time and consent",done:false,created:tAt(0,8)},{id:"t8",day:T,text:"Repeat LFTs + INR",done:false,created:tAt(0,8)}];
   return{"ex-1":a,"ex-2":b,"ex-3":c};}
@@ -1245,8 +1256,12 @@ function todoHTML(p,pid){
   let h=`<section class="todo" aria-label="Today's jobs"><div class="thead"><h3>Today's jobs</h3><span class="tcount">${today.length?done+" of "+today.length+" done":"nothing yet"}</span>${today.length&&done===today.length?`<span class="tall">All done</span>`:""}</div>`;
   if(today.length)h+=`<ul class="tlist">${today.map(x=>todoItem(pid,x,false)).join("")}</ul>`;
   if(carried.length)h+=`<div class="tcarry"><p>Not done from earlier (${carried.length})</p><ul class="tlist">${carried.map(x=>todoItem(pid,x,true)).join("")}</ul></div>`;
-  h+=`<form class="tadd" id="todoForm" data-pid="${esc(pid)}"><input id="t_text" list="dl_jobs" autocomplete="off" placeholder="Add a job for today, e.g. repeat U&amp;E, discharge summary" aria-label="New job"><button class="btn primary small" type="submit">Add</button></form><datalist id="dl_jobs">${JOBS.map(j=>`<option value="${esc(j)}">`).join("")}</datalist></section>`;
-  return h;}
+  h+=`<form class="tadd" id="todoForm" data-pid="${esc(pid)}"><input id="t_text" list="dl_jobs" autocomplete="off" placeholder="Add a job for today, e.g. repeat U&amp;E, discharge summary" aria-label="New job"><button class="btn primary small" type="submit">Add</button></form><datalist id="dl_jobs">${JOBS.map(j=>`<option value="${esc(j)}">`).join("")}</datalist>`;
+  const past=all.filter(x=>x.day<t);
+  if(past.length){const days=[...new Set(past.map(x=>x.day))].sort().reverse();
+    h+=`<details class="thist"><summary>Previous days (${days.length})</summary>${days.map(d=>{const its=past.filter(x=>x.day===d).sort((a,b)=>(b.done-a.done));const nd=its.filter(x=>x.done).length;
+      return`<div class="tday"><h5>${esc(dayLabel(d)==="yesterday"?"Yesterday · "+fmtDT(d+"T00:00").d:fmtDT(d+"T00:00").d)} <span>${nd} of ${its.length} done</span></h5><ul>${its.map(x=>`<li class="${x.done?"ok":"no"}"><span class="mk">${x.done?"✓":"○"}</span><span>${esc(x.text)}</span><span class="tm">${x.done&&x.doneAt?esc(fmtDT(x.doneAt).t):"not done"}</span></li>`).join("")}</ul></div>`;}).join("")}</details>`;}
+  return h+`</section>`;}
 function wardTodoHTML(list){
   const t=todayStr();let g="",open=0;
   for(const [id,p] of list){if(stOf(p)!=="active")continue;const all=p.todo||[];
