@@ -210,6 +210,26 @@ td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color
 .stwarn ul{margin:6px 0 0;padding-left:18px}
 .stbtns{display:flex;gap:8px;justify-content:flex-end}
 @media (max-width:760px){.stabs{min-width:0}}
+.todo{background:var(--surface);border:1.5px solid var(--accent);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.thead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.thead h3{margin:0;font-size:17px;font-weight:700;color:var(--accent);letter-spacing:-.01em}
+.tcount{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.tall{font-size:11.5px;font-weight:600;background:var(--accent);color:var(--accent-ink);border-radius:10px;padding:1px 8px}
+.tlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.titem{display:grid;grid-template-columns:26px 1fr auto auto;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;background:var(--accent-soft)}
+.titem.done{background:transparent}
+.titem.done .ttext{text-decoration:line-through;color:var(--muted)}
+.titem.carried{background:var(--warn-bg)}
+.tbox{width:24px;height:24px;border-radius:6px;border:2px solid var(--accent);background:var(--surface);cursor:pointer;padding:0;color:var(--accent-ink);font-weight:700;line-height:1;font-size:14px}
+.tbox:hover{background:var(--accent-soft)}
+.tbox.on{background:var(--accent);border-color:var(--accent)}
+.ttext{min-width:0}
+.ttext em{font-style:normal;font-size:12px;color:var(--muted);margin-left:8px}
+.tdone{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.tcarry p{margin:4px 0;font-size:12.5px;color:var(--warn-ink);font-weight:600}
+.tadd{display:grid;grid-template-columns:1fr auto;gap:8px}
+.tadd input{border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:8px 10px;min-width:0}
+.tnone{margin:0;font-size:13px;color:var(--muted)}
 .chip.pendc{background:var(--warn-bg);color:var(--warn-ink)}
 .chip.cntc{background:var(--surface-2);color:var(--muted)}
 .replist{display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -288,7 +308,7 @@ td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color
   <aside class="side">
     <div class="brand"><h1>Ward Bloods</h1><span id="pcount"></span></div>
     <button class="btn primary" id="addPatient" type="button">+ Add patient</button>
-    <button class="btn chasebtn" id="chaseAll" type="button" aria-current="false"><span>Ward chase list</span><span class="n" id="chaseN">0</span></button>
+    <button class="btn chasebtn" id="chaseAll" type="button" aria-current="false"><span>Ward chase &amp; jobs</span><span class="n" id="chaseN">0</span></button>
     <div class="stabs" id="stabs" role="tablist" aria-label="Patient lists"></div>
     <ul class="plist" id="plist"></ul>
     <div class="status" id="status"><span class="dot"></span><span id="statusText">Loading…</span><button class="linkbtn" type="button" id="signOut" hidden style="margin-left:auto">Lock</button></div>
@@ -416,7 +436,7 @@ function rangeLabel(t){
 function num(v){if(v==null)return NaN;const s=String(v).trim().replace(",",".").replace(/^[<>≤≥]=?\s*/,"");return s===""?NaN:parseFloat(s);}
 function flag(v,r){const x=num(v);if(isNaN(x)||!r)return"";if(r[0]!=null&&x<r[0])return"lo";if(r[1]!=null&&x>r[1])return"hi";return"";}
 function sortedCols(p){return[...(p.cols||[])].sort((a,b)=>a.dt<b.dt?-1:a.dt>b.dt?1:0);}
-function blank(){return{name:"",age:"",sex:"",ward:"",consultant:"",admitted:"",dx:"",cols:[],v:{},custom:{},notes:[],micro:[],path:[],rad:[],chase:[],created:Date.now(),updated:Date.now()};}
+function blank(){return{name:"",age:"",sex:"",ward:"",consultant:"",admitted:"",dx:"",cols:[],v:{},custom:{},notes:[],micro:[],path:[],rad:[],chase:[],todo:[],created:Date.now(),updated:Date.now()};}
 function allTests(p,panel){return[...panel.tests.map(t=>({...t,key:panel.key+"."+t.k})),...((p.custom&&p.custom[panel.key])||[]).map(c=>({k:c.k,n:c.n,u:c.u||"",note:"custom",key:c.k,custom:true}))];}
 function latestFlags(p,panel){
   const cols=sortedCols(p);const out={hi:0,lo:0};if(!cols.length)return out;
@@ -466,6 +486,10 @@ function makeExamples(){
     {id:"c5",cat:"Referral / review",text:"Diabetes educator review before discharge",done:false,created:tAt(0,10)}];
   c.chase=[{id:"c6",cat:"Procedure",text:"ERCP time from GI team",due:tAt(0,16),done:false,created:tAt(1,12)},
     {id:"c7",cat:"Bloods",text:"INR after vitamin K",done:false,created:tAt(1,12)}];
+  const T=todayStr(),Y=tAt(1,8).slice(0,10);
+  a.todo=[{id:"t1",day:T,text:"Repeat U&E",done:true,doneAt:tAt(0,9,15),created:tAt(0,8)},{id:"t2",day:T,text:"Step down to oral antibiotics?",done:false,created:tAt(0,8)},{id:"t3",day:T,text:"Update relatives",done:false,created:tAt(0,8)},{id:"t4",day:Y,text:"Physio referral",done:false,created:tAt(1,8)}];
+  b.todo=[{id:"t5",day:T,text:"VBG 2-hourly while on FRIII",done:false,created:tAt(0,7)},{id:"t6",day:T,text:"Chart KCl",done:true,doneAt:tAt(0,10,40),created:tAt(0,7)}];
+  c.todo=[{id:"t7",day:T,text:"Confirm ERCP time and consent",done:false,created:tAt(0,8)},{id:"t8",day:T,text:"Repeat LFTs + INR",done:false,created:tAt(0,8)}];
   return{"ex-1":a,"ex-2":b,"ex-3":c};}
 
 /* ---------- State ---------- */
@@ -490,7 +514,7 @@ function orderedBy(st){return ordered().filter(x=>stOf(x[1])===st);}
 const ST_LABEL={active:"Active",discharged:"Discharged",deceased:"Deceased"};
 const isEx=id=>typeof id==="string"&&id.startsWith("ex-");
 function current(){if(isEx(S.cur))return S.examples?S.examples[S.cur]:null;return S.patients[S.cur]||null;}
-function showExamples(){S.examples=makeExamples();S.cur="ex-1";}
+function showExamples(){if(S.mode==="supabase"){S.examples=null;S.cur=null;return;}S.examples=makeExamples();S.cur="ex-1";}
 
 /* ---------- Saving ---------- */
 function touch(id){
@@ -577,6 +601,7 @@ function renderMain(){
   h+=`<div class="phead"><div><h2>${esc(p.name||"Unnamed patient")}</h2><div class="meta">${meta.map(x=>`<span>${esc(x)}</span>`).join("")||"<span>Add details below</span>"}</div></div>
    <div class="toolbar"><button class="btn" type="button" data-act="paste">Paste results</button><button class="btn primary" type="button" data-act="entry">+ Enter results</button></div></div>`;
   h+=chaseHTML(p,S.cur,false);
+  h+=todoHTML(p,S.cur);
   const openDetails=!p.name&&!exMode;
   h+=`<details class="card" id="detailsCard" ${openDetails?"open":""}><summary>${CHEV}Patient details</summary><div class="fields">
    ${fld("name","Label (e.g. initials or bed)",p.name)}${fld("age","Age (years)",p.age||(age(p.dob)||"").replace("y",""),"number")}
@@ -991,7 +1016,7 @@ function renderChaseAll(m){
   for(const [id,p] of list){const n=chaseCount(p);if(!n)continue;total+=n;
     over+=(p.chase||[]).filter(c=>!c.done&&dueOf(c)&&dueOf(c).over).length;
     g+=`<div class="cgroup"><h4><button type="button" data-open="${esc(id)}">${esc(p.name||"Unnamed patient")}</button>${stOf(p)==="discharged"?` <span class="stp pend">discharged</span>`:""}${p.ward?` <span class="ccount" style="font-weight:400;font-family:var(--mono);font-size:12px;color:var(--muted)">${esc(p.ward)}</span>`:""}</h4><ul class="clist">${chaseItems(p,id)}</ul></div>`;}
-  m.innerHTML=`${ordered().length?"":`<div class="banner">Showing the example patients' chase items.</div>`}<section class="chase"><div class="chead"><h3>Ward chase list</h3><span class="ccount">${total} open across ${list.filter(([i,p])=>chaseCount(p)).length} patients</span>${over?`<span class="cover">${over} overdue</span>`:""}</div>${g||`<p class="cnone">Nothing to chase on the ward.</p>`}<p class="cnone" style="font-size:12.5px">Tick items here or on each patient. Pending cultures, pathology and imaging appear automatically until marked Final or Reported.</p></section>`;}
+  m.innerHTML=`${ordered().length?"":`<div class="banner">Showing the example patients' chase items.</div>`}<section class="chase"><div class="chead"><h3>Ward chase list</h3><span class="ccount">${total} open across ${list.filter(([i,p])=>chaseCount(p)).length} patients</span>${over?`<span class="cover">${over} overdue</span>`:""}</div>${g||`<p class="cnone">Nothing to chase on the ward.</p>`}<p class="cnone" style="font-size:12.5px">Tick items here or on each patient. Pending cultures, pathology and imaging appear automatically until marked Final or Reported.</p></section>`+wardTodoHTML(ordered().length?ordered():Object.entries(S.examples||{}));}
 function chaseAct(ev){
   const t=ev.target.closest("[data-cdone],[data-cundo],[data-cdel],[data-cclear],[data-cgo],[data-open]");if(!t)return;
   if(t.dataset.open){S.cur=t.dataset.open;S.view="patient";const op=patientById(S.cur);S.tab=isEx(S.cur)?"active":stOf(op);renderAll();window.scrollTo(0,0);return;}
@@ -1203,6 +1228,45 @@ main.addEventListener("click",ev=>{
   else if(act==="reactivate"){p.status="active";delete p.diedAt;}
   else return;
   S.tab=stOf(p);touch(S.cur);renderAll();window.scrollTo(0,0);});
+
+/* ---------- Today's jobs (daily to-do per patient) ---------- */
+const JOBS=["Bloods","Review bloods","Chase results","Chart / review meds","Fluids","Cannula","Catheter review","ECG","CXR","Referral","Consent","Discharge summary","TTO / discharge meds","Call family","Senior review","Update relatives","OT / PT review","Swab / culture"];
+const todayStr=()=>nowLocal().slice(0,10);
+function dayLabel(d){const t=todayStr();if(d===t)return"today";const y=new Date(Date.now()-864e5);const ys=y.getFullYear()+"-"+pad(y.getMonth()+1)+"-"+pad(y.getDate());if(d===ys)return"yesterday";return fmtDT(d+"T00:00").d;}
+function todoCounts(p){const t=todayStr();const all=p.todo||[];const today=all.filter(x=>x.day===t);
+  return{open:today.filter(x=>!x.done).length+all.filter(x=>x.day<t&&!x.done).length,done:today.filter(x=>x.done).length,total:today.length};}
+function todoItem(pid,x,carried){
+  return`<li class="titem${x.done?" done":""}${carried?" carried":""}"><button class="tbox${x.done?" on":""}" type="button" data-tdone="${esc(pid)}|${esc(x.id)}" aria-pressed="${!!x.done}" aria-label="${x.done?"Mark not done":"Mark done"}: ${esc(x.text)}">${x.done?"✓":""}</button><span class="ttext">${esc(x.text)}${carried?`<em>from ${esc(dayLabel(x.day))}</em>`:""}</span>${carried?`<button class="linkbtn" type="button" data-tmove="${esc(pid)}|${esc(x.id)}">Move to today</button>`:x.done&&x.doneAt?`<span class="tdone">${esc(fmtDT(x.doneAt).t)}</span>`:"<span></span>"}<button class="rmrow" type="button" data-tdel="${esc(pid)}|${esc(x.id)}" aria-label="Delete">✕</button></li>`;}
+function todoHTML(p,pid){
+  const t=todayStr();const all=p.todo||[];
+  const today=all.filter(x=>x.day===t).sort((a,b)=>(a.done-b.done)||((a.created||"")<(b.created||"")?-1:1));
+  const carried=all.filter(x=>x.day<t&&!x.done).sort((a,b)=>a.day<b.day?-1:1);
+  const done=today.filter(x=>x.done).length;
+  let h=`<section class="todo" aria-label="Today's jobs"><div class="thead"><h3>Today's jobs</h3><span class="tcount">${today.length?done+" of "+today.length+" done":"nothing yet"}</span>${today.length&&done===today.length?`<span class="tall">All done</span>`:""}</div>`;
+  if(today.length)h+=`<ul class="tlist">${today.map(x=>todoItem(pid,x,false)).join("")}</ul>`;
+  if(carried.length)h+=`<div class="tcarry"><p>Not done from earlier (${carried.length})</p><ul class="tlist">${carried.map(x=>todoItem(pid,x,true)).join("")}</ul></div>`;
+  h+=`<form class="tadd" id="todoForm" data-pid="${esc(pid)}"><input id="t_text" list="dl_jobs" autocomplete="off" placeholder="Add a job for today, e.g. repeat U&amp;E, discharge summary" aria-label="New job"><button class="btn primary small" type="submit">Add</button></form><datalist id="dl_jobs">${JOBS.map(j=>`<option value="${esc(j)}">`).join("")}</datalist></section>`;
+  return h;}
+function wardTodoHTML(list){
+  const t=todayStr();let g="",open=0;
+  for(const [id,p] of list){if(stOf(p)!=="active")continue;const all=p.todo||[];
+    const items=all.filter(x=>(x.day===t)||(x.day<t&&!x.done));if(!items.length)continue;
+    open+=items.filter(x=>!x.done).length;
+    g+=`<div class="cgroup"><h4><button type="button" data-open="${esc(id)}">${esc(p.name||"Unnamed patient")}</button>${p.ward?` <span style="font-weight:400;font-family:var(--mono);font-size:12px;color:var(--muted)">${esc(p.ward)}</span>`:""}</h4><ul class="tlist">${items.sort((a,b)=>(a.done-b.done)).map(x=>todoItem(id,x,x.day<t)).join("")}</ul></div>`;}
+  return`<section class="todo"><div class="thead"><h3>Today's jobs · ward</h3><span class="tcount">${open} still to do</span></div>${g||`<p class="tnone">No jobs added for today yet.</p>`}</section>`;}
+main.addEventListener("click",ev=>{
+  const t=ev.target.closest("[data-tdone],[data-tdel],[data-tmove]");if(!t)return;
+  const [pid,id]=(t.dataset.tdone||t.dataset.tdel||t.dataset.tmove).split("|");const p=patientById(pid);if(!p)return;
+  const x=(p.todo||[]).find(y=>y.id===id);if(!x)return;
+  if(t.dataset.tdone){x.done=!x.done;if(x.done)x.doneAt=nowLocal();else delete x.doneAt;}
+  else if(t.dataset.tmove){x.day=todayStr();}
+  else{if(!t.classList.contains("armed")){t.classList.add("armed");t.textContent="Delete?";setTimeout(()=>{if(t.isConnected){t.classList.remove("armed");t.textContent="✕";}},3000);return;}
+    p.todo=p.todo.filter(y=>y.id!==id);}
+  touch(pid);renderAll();});
+main.addEventListener("submit",ev=>{const f=ev.target;if(f.id!=="todoForm")return;ev.preventDefault();
+  const pid=f.dataset.pid;const p=patientById(pid);if(!p)return;const inp=f.querySelector("#t_text");const txt=inp.value.trim();if(!txt){inp.focus();return;}
+  p.todo=p.todo||[];p.todo.push({id:uid().slice(0,12),day:todayStr(),text:txt.slice(0,200),done:false,created:nowLocal()});
+  touch(pid);renderAll();setTimeout(()=>{const i=document.getElementById("t_text");if(i)i.focus();},0);});
 
 /* ---------- Boot ---------- */
 function useLocal(){
