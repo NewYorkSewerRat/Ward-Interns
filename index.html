@@ -292,6 +292,15 @@ td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color
 .lbox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.88);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;cursor:zoom-out}
 .lbox img{max-width:100%;max-height:calc(100% - 60px);object-fit:contain;background:#000}
 @media (max-width:520px){.fields2{grid-template-columns:1fr}}
+.mset{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.mhead{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.mhead input[type=datetime-local]{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:5px 8px;font-family:var(--mono);font-size:13px}
+.mcount{font-family:var(--mono);font-size:12px;color:var(--muted);margin-left:auto}
+.mvals{display:flex;flex-wrap:wrap;gap:4px}
+.mchip{font-size:12px;border:1px solid var(--line);border-radius:6px;padding:1px 7px;background:var(--bg)}
+.mchip b{font-family:var(--mono);font-weight:500}
+.mchip.hi{background:var(--hi-bg);border-color:transparent;color:var(--hi)}
+.mchip.lo{background:var(--lo-bg);border-color:transparent;color:var(--lo)}
 .pastebox{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:10px 12px;min-height:220px;font-family:var(--mono);font-size:13px;resize:vertical;width:100%}
 .readnote{background:var(--accent-soft);border-radius:8px;padding:10px 12px;font-size:13px;display:flex;flex-direction:column;gap:4px}
 .readnote.warn{background:var(--warn-bg);color:var(--warn-ink)}
@@ -639,18 +648,20 @@ function panelHTML(p,pn,cols){
   const all=allTests(p,pn);const tests=S.showAll?all:all.filter(t=>rowHas(p,t.key));
   if(!tests.length)return"";
   const missing=S.showAll?[]:all.filter(t=>!tests.includes(t)).map(t=>t.n);
+  const has=(k,c)=>{const v=((p.v||{})[k]||{})[c];return v!=null&&String(v).trim()!=="";};
+  const pcols=S.showAll?cols:cols.filter(c=>all.some(t=>has(t.key,c.id)));
   const f=latestFlags(p,pn);
   const chips=(f.hi?`<span class="chip hi" title="High on latest">${f.hi} ↑</span>`:"")+(f.lo?`<span class="chip lo" title="Low on latest">${f.lo} ↓</span>`:"");
   let t=`<details class="card panel" data-panel="${pn.key}" ${isOpen(p,pn)?"open":""}><summary>${CHEV}${esc(pn.name)} <span class="sys">${esc(pn.sys)}</span><span class="flags">${chips}</span></summary>`;
   t+=`<div class="twrap"><table><thead><tr><th class="c-test">Test</th><th>Units</th><th>Range</th><th>Trend</th>`;
-  cols.forEach((c,i)=>{const d=fmtDT(c.dt);t+=`<th class="colh"><button type="button" class="d eb" data-editcol="${esc(c.id)}" title="Edit this sample">D${i+1} · ${esc(d.d)}</button><div>${esc(d.t)}</div><button class="x" type="button" data-rmcol="${esc(c.id)}" aria-label="Remove sample ${esc(d.d)} ${esc(d.t)}">✕</button></th>`;});
-  if(!cols.length)t+=`<th></th>`;
+  pcols.forEach(c=>{const i=cols.indexOf(c);const d=fmtDT(c.dt);t+=`<th class="colh"><button type="button" class="d eb" data-editcol="${esc(c.id)}" title="Edit this sample">D${i+1} · ${esc(d.d)}</button><div>${esc(d.t)}</div><button class="x" type="button" data-rmcol="${esc(c.id)}" data-pn="${pn.key}" title="Remove ${esc(pn.name)} results for ${esc(d.d)} ${esc(d.t)}" aria-label="Remove ${esc(pn.name)} results for ${esc(d.d)} ${esc(d.t)}">✕</button></th>`;});
+  if(!pcols.length)t+=`<th></th>`;
   t+=`</tr></thead><tbody>`;
   for(const ts of tests){const r=rangeFor(ts,p.sex);const row=(p.v||{})[ts.key]||{};
     t+=`<tr data-k="${esc(ts.key)}"><th class="c-test" scope="row">${esc(ts.n)}${ts.custom?`<button class="rmrow" type="button" data-rmtest="${esc(ts.key)}" data-pn="${pn.key}" aria-label="Remove ${esc(ts.n)}">✕</button>`:""}</th><td class="c-u">${esc(ts.u)}</td><td class="c-r">${esc(ts.custom?"—":rangeLabel(ts))}</td><td class="c-sp">${spark(p,ts)}</td>`;
-    cols.forEach(c=>{const val=row[c.id]??"";const fl=flag(val,r);const d=fmtDT(c.dt);
+    pcols.forEach(c=>{const val=row[c.id]??"";const fl=flag(val,r);const d=fmtDT(c.dt);
       t+=`<td class="v ${fl}"><input id="v_${esc(ts.key)}_${esc(c.id)}" data-k="${esc(ts.key)}" data-c="${esc(c.id)}" value="${esc(val)}" inputmode="decimal" autocomplete="off" aria-label="${esc(ts.n)} ${esc(d.d)} ${esc(d.t)}"></td>`;});
-    if(!cols.length)t+=`<td class="empty">Use + Enter results to add a sample</td>`;
+    if(!pcols.length)t+=`<td class="empty">Use + Enter results to add a sample</td>`;
     t+=`</tr>`;}
   t+=`</tbody></table></div>${missing.length?`<div class="notmeas">Not measured: ${esc(missing.join(", "))}</div>`:""}${S.showAll?`<form class="addtest" data-addtest="${pn.key}">`:"<!--"}<input id="nt_${pn.key}" placeholder="Add another test" aria-label="New test name"><input class="u" id="nu_${pn.key}" placeholder="Units" aria-label="Units"><button class="btn small" type="submit">Add test</button>${S.showAll?"</form>":"-->"}</details>`;
   return t;}
@@ -711,7 +722,12 @@ main.addEventListener("click",e=>{
   if(t.dataset.act==="entry")return entrySheet(null);
   if(t.dataset.act==="paste")return pasteSheet();
   if(t.dataset.editcol)return entrySheet(t.dataset.editcol);
-  if(t.dataset.rmcol){const id=t.dataset.rmcol;arm(t,"Remove?",()=>{p.cols=p.cols.filter(c=>c.id!==id);for(const k in p.v)delete p.v[k][id];touch(S.cur);renderAll();});return;}
+  if(t.dataset.rmcol){const id=t.dataset.rmcol;const pn=PANELS.find(x=>x.key===t.dataset.pn);
+    arm(t,"Remove?",()=>{const keys=pn?allTests(p,pn).map(x=>x.key):Object.keys(p.v||{});
+      for(const k of keys)if(p.v&&p.v[k])delete p.v[k][id];
+      const used=Object.values(p.v||{}).some(r=>r&&r[id]!=null&&String(r[id]).trim()!=="");
+      if(!used)p.cols=(p.cols||[]).filter(c=>c.id!==id);
+      touch(S.cur);renderAll();});return;}
   if(t.dataset.rmtest){const k=t.dataset.rmtest,pk=t.dataset.pn;arm(t,"Remove?",()=>{p.custom[pk]=(p.custom[pk]||[]).filter(x=>x.k!==k);delete p.v[k];touch(S.cur);renderMain();});return;}
   if(t.dataset.rmnote){const id=t.dataset.rmnote;arm(t,"Delete?",()=>{p.notes=p.notes.filter(n=>n.id!==id);touch(S.cur);renderMain();});return;}
   if(t.id==="delPatient"){arm(t,"Click again to delete everything for this patient",()=>removePatient(S.cur));return;}
@@ -837,7 +853,14 @@ function pasteSheet(){
   layer.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",closeSheet));
   document.addEventListener("keydown",escSheet);
   const f=layer.querySelector("#psheet");const ta=f.querySelector("#ptext");setTimeout(()=>ta.focus(),0);
-  f.addEventListener("submit",e=>{e.preventDefault();const r=parsePaste(ta.value,p);const n=Object.keys(r.vals).length;
+  f.addEventListener("submit",e=>{e.preventDefault();
+    const blocks=splitByDate(ta.value);
+    if(blocks.length>1){const byDt={},unk=new Set();
+      for(const bl of blocks){const q=parsePaste(bl,p);q.unknown.forEach(u=>unk.add(u));if(!Object.keys(q.vals).length)continue;
+        const key=q.dt||("nodate"+Object.keys(byDt).length);if(byDt[key])Object.assign(byDt[key].vals,q.vals);else byDt[key]=q;}
+      const sets=Object.values(byDt);
+      if(sets.length>1)return multiPasteSheet(p,sets,[...unk]);}
+    const r=parsePaste(ta.value,p);const n=Object.keys(r.vals).length;
     if(!n){const h=f.querySelector(".shint");h.style.color="var(--hi)";h.textContent="No recognised results found. Check the paste has test names followed by numbers, e.g. \"Na 133, K 4.3\".";return;}
     const notes=[`<span><b>${n} results read.</b> Check each tab, then save.</span>`];
     if(!r.dt)notes.push(`<span>No date found in the paste. Set the sample time above.</span>`);
@@ -845,6 +868,39 @@ function pasteSheet(){
     if(r.unknown.length)notes.push(`<span>Not recognised (ignored): ${esc(r.unknown.slice(0,12).join(", "))}</span>`);
     if(r.dup.length)notes.push(`<span>Appeared twice, last value kept: ${esc(r.dup.join(", "))}</span>`);
     entrySheet(null,{vals:r.vals,dt:r.dt,note:`<div class="readnote${(!r.dt||r.unknown.length)?" warn":""}">${notes.join("")}</div>`});});}
+
+/* ---------- Paste with several dates ---------- */
+function splitByDate(text){
+  const clean=String(text||"").split(/\r?\n/).filter(l=>!/ranges?\s+in\s+effect|effective\s+from/i.test(l)).join("\n");
+  const re=/\b\d{4}[\/\-.]\d{1,2}[\/\-.]\d{1,2}\b|\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{4}\b/g;const idx=[];let m;
+  while((m=re.exec(clean)))idx.push(m.index);
+  if(idx.length<2)return[clean];
+  const out=[];for(let k=0;k<idx.length;k++)out.push(clean.slice(k===0?0:idx[k],k+1<idx.length?idx[k+1]:clean.length));
+  return out;}
+function findTest(p,key){for(const pn of PANELS){const t=allTests(p,pn).find(x=>x.key===key);if(t)return t;}return null;}
+function multiPasteSheet(p,sets,unknown){
+  sets.sort((a,b)=>(a.dt||"")<(b.dt||"")?-1:1);
+  const colAt=dt=>(p.cols||[]).find(c=>c.dt===dt);
+  const chips=vals=>Object.entries(vals).map(([k,v])=>{const t=findTest(p,k);const fl=t&&!t.custom?flag(v,rangeFor(t,p.sex)):"";
+    return`<span class="mchip ${fl}">${esc(t?t.n:k)} <b>${esc(v)}${fl==="hi"?"↑":fl==="lo"?"↓":""}</b></span>`;}).join("");
+  const total=sets.reduce((n,s)=>n+Object.keys(s.vals).length,0);
+  layer.innerHTML=`<div class="scrim" data-close></div><form class="sheet" id="msheet" novalidate>
+    <header><h2>${sets.length} blood sets found · ${esc(p.name||"patient")}</h2><button class="rmrow" type="button" data-close aria-label="Close" style="font-size:16px">✕</button></header>
+    <div class="sbody"><div class="readnote${unknown.length?" warn":""}"><span><b>${total} results across ${sets.length} dates.</b> Each date becomes its own column. Check the dates and values, untick any you don't want, then save.</span>${sets.some(s=>!s.hasTime)?`<span>Where the paste has no time, 06:00 is used. Change it below if needed.</span>`:""}${unknown.length?`<span>Not recognised (ignored): ${esc(unknown.slice(0,12).join(", "))}</span>`:""}</div>
+    ${sets.map((s,i)=>`<div class="mset"><div class="mhead"><label class="chk"><input type="checkbox" data-mi="${i}" checked> <b>Set ${i+1}</b></label><input type="datetime-local" data-md="${i}" value="${esc(s.dt||nowLocal())}" aria-label="Sample time for set ${i+1}"><span class="mcount">${Object.keys(s.vals).length} results</span></div>
+      ${colAt(s.dt)?`<p class="shint">A column for this date and time already exists. These values will be added to it.</p>`:""}<div class="mvals">${chips(s.vals)}</div></div>`).join("")}
+    <p class="shint">To fix a single value, save first, then click that date at the top of its column to edit it.</p></div>
+    <div class="sfoot"><span class="grow"></span><button class="btn" type="button" data-close>Cancel</button><button class="btn primary" type="submit" id="msave">Save ${sets.length} sets</button></div></form>`;
+  layer.querySelectorAll("[data-close]").forEach(b=>b.addEventListener("click",closeSheet));
+  document.addEventListener("keydown",escSheet);
+  const f=layer.querySelector("#msheet");
+  const upd=()=>{const n=f.querySelectorAll("[data-mi]:checked").length;const b=f.querySelector("#msave");b.textContent="Save "+n+" set"+(n===1?"":"s");b.disabled=!n;};
+  f.addEventListener("change",upd);
+  f.addEventListener("submit",e=>{e.preventDefault();p.cols=p.cols||[];p.v=p.v||{};
+    sets.forEach((s,i)=>{if(!f.querySelector(`[data-mi="${i}"]`).checked)return;const dt=f.querySelector(`[data-md="${i}"]`).value||nowLocal();
+      let col=colAt(dt);if(!col){col={id:uid().slice(0,12),dt};p.cols.push(col);}
+      for(const [k,v] of Object.entries(s.vals)){p.v[k]=p.v[k]||{};p.v[k][col.id]=v;}});
+    touch(S.cur);closeSheet();renderAll();requestAnimationFrame(()=>main.querySelectorAll(".twrap").forEach(w=>{w.scrollLeft=w.scrollWidth;}));});}
 
 /* ---------- Reports: microbiology, pathology, radiology ---------- */
 const REP={
