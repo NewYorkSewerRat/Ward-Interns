@@ -309,6 +309,43 @@ td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color
 .imact{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
 .imdate{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 6px;font-size:12.5px;width:135px}
 @media (max-width:760px){.imadd{grid-template-columns:1fr 1fr}.imadd #im_study{grid-column:1/-1;order:-1}.imadd button{grid-column:1/-1}.imrow{grid-template-columns:1fr}.imsrc{justify-self:start;padding:1px 8px}.imact{justify-content:flex-start}}
+.roundbtn{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.roundbtn .n{background:var(--accent-ink);color:var(--accent)}
+.roundbtn:hover{background:var(--accent);filter:brightness(1.08)}
+.oncallbtn:hover{background:var(--hi-bg);filter:brightness(.97)}
+.clinicbtn:hover{background:var(--lo-bg);filter:brightness(.97)}
+.imgbtn:hover{filter:brightness(.97)}
+.round{display:flex;flex-direction:column;gap:12px}
+.round .ochead h2{color:var(--accent)}
+.rqbox{background:var(--surface);border:1.5px solid var(--accent);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.rqbox h3{margin:0;font-size:16px;color:var(--accent)}
+.rqform{display:grid;grid-template-columns:1fr auto;gap:8px}
+.rqform input{border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:11px 12px;font-size:15px;min-width:0}
+.rqlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.rqitem{display:grid;grid-template-columns:1fr 230px auto auto;gap:8px;align-items:center;background:var(--accent-soft);border-radius:8px;padding:6px 8px}
+.rqitem select{border:1px solid var(--line);background:var(--surface);border-radius:6px;padding:6px 8px;min-width:0}
+.rqitem select.need{border-color:var(--hi);outline:2px solid var(--hi-bg)}
+.rqbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.rqpt{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.rqhead{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.rqhead .tcount{margin-left:auto}
+.rqpadd{display:grid;grid-template-columns:1fr auto;gap:8px}
+.rqpadd input{border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:8px 10px;min-width:0}
+@media (max-width:760px){.rqitem{grid-template-columns:1fr auto}.rqitem select{grid-column:1/-1;grid-row:2}.rqitem .btn{grid-row:3;grid-column:1/-1}}
+.census .cen{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:3px;font-size:12.5px}
+.cen-total{display:flex;align-items:baseline;gap:6px}
+.cen-total b{font-size:20px;font-family:var(--mono);font-weight:600;line-height:1}
+.cen-total span{color:var(--muted)}
+.cen-row{display:grid;grid-template-columns:auto auto auto auto auto auto;justify-content:start;gap:2px 6px;align-items:baseline}
+.cen-row b{font-family:var(--mono);font-weight:600;margin-right:8px}
+.cen-k{color:var(--muted)}
+.cen.big{display:flex;flex-direction:row;flex-wrap:wrap;gap:8px 28px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-size:14px}
+.cen.big .cen-total b{font-size:28px}
+.cen.big .cen-row b{font-size:17px}
+.efctag{font-size:11px;font-weight:700;letter-spacing:.04em;background:var(--surface-2);border:1px solid var(--muted);color:var(--ink);border-radius:6px;padding:1px 6px;vertical-align:middle}
+.efctag.sm{font-size:10px;padding:0 4px}
+.efcbox{display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0;font-size:13.5px;color:var(--ink);padding:7px 0}
+@media (max-width:760px){.census{order:3}}
 .chip.pendc{background:var(--warn-bg);color:var(--warn-ink)}
 .chip.cntc{background:var(--surface-2);color:var(--muted)}
 .replist{display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -396,10 +433,12 @@ td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color
   <aside class="side">
     <div class="brand"><h1>Ward Bloods</h1><span id="pcount"></span></div>
     <button class="btn primary" id="addPatient" type="button">+ Add patient</button>
+    <button class="btn navbtn roundbtn" id="rqBtn" type="button" aria-current="false"><span>Ward round · quick jot</span><span class="n" id="rqN">0</span></button>
     <button class="btn chasebtn" id="chaseAll" type="button" aria-current="false"><span>Ward chase &amp; jobs</span><span class="n" id="chaseN">0</span></button>
     <div class="navrow"><button class="btn navbtn oncallbtn" id="ocBtn" type="button" aria-current="false"><span>On-call</span><span class="n" id="ocN">0</span></button><button class="btn navbtn clinicbtn" id="clBtn" type="button" aria-current="false"><span>Clinic</span><span class="n" id="clN">0</span></button></div>
     <button class="btn navbtn imgbtn" id="imBtn" type="button" aria-current="false"><span>Imaging to book</span><span class="n" id="imN">0</span></button>
     <div class="stabs" id="stabs" role="tablist" aria-label="Patient lists"></div>
+    <div class="census" id="census" aria-label="Service census"></div>
     <ul class="plist" id="plist"></ul>
     <div class="status" id="status"><span class="dot"></span><span id="statusText">Loading…</span><button class="linkbtn" type="button" id="signOut" hidden style="margin-left:auto">Lock</button></div>
   </aside>
@@ -636,11 +675,19 @@ async function removePatient(id){
   renderAll();}
 
 /* ---------- Sidebar ---------- */
+function censusData(){const l=(ordered().length?orderedBy("active"):Object.entries(S.examples||{})).map(x=>x[1]);
+  const c={total:l.length,m:0,f:0,u:0,efc:0,act:0};for(const p of l){if(p.sex==="M")c.m++;else if(p.sex==="F")c.f++;else c.u++;if(p.efc)c.efc++;else c.act++;}return c;}
+function censusHTML(big){const c=censusData();
+  return`<div class="cen${big?" big":""}"><div class="cen-total"><b>${c.total}</b><span>on service</span></div>
+    <div class="cen-row"><span class="cen-k">Male</span><b>${c.m}</b><span class="cen-k">Female</span><b>${c.f}</b>${c.u?`<span class="cen-k">Not set</span><b>${c.u}</b>`:""}</div>
+    <div class="cen-row"><span class="cen-k">Active</span><b>${c.act}</b><span class="cen-k">E.F.C.</span><b>${c.efc}</b></div></div>`;}
 function renderSidebar(){
+  {const ce=document.getElementById("census");if(ce)ce.innerHTML=censusHTML(false);}
   {let n=0;const all=ordered().length?ordered().map(x=>x[1]).filter(p=>stOf(p)!=="deceased"):Object.values(S.examples||{});all.forEach(p=>n+=chaseCount(p));
    const cn=document.getElementById("chaseN");if(cn)cn.textContent=n;const cb=document.getElementById("chaseAll");if(cb)cb.setAttribute("aria-current",String(S.view==="chase"));
    const oN=document.getElementById("ocN");if(oN)oN.textContent=ocOpen().length;const cN=document.getElementById("clN");if(cN)cN.textContent=clOpenTasks();
    const ob=document.getElementById("ocBtn");if(ob)ob.setAttribute("aria-current",String(S.view==="oncall"));const clb=document.getElementById("clBtn");if(clb)clb.setAttribute("aria-current",String(S.view==="clinic"));
+   const rN=document.getElementById("rqN");if(rN)rN.textContent=inboxItems().length;const rb=document.getElementById("rqBtn");if(rb)rb.setAttribute("aria-current",String(S.view==="round"));
    const iN=document.getElementById("imN");if(iN)iN.textContent=imgCount();const ib=document.getElementById("imBtn");if(ib)ib.setAttribute("aria-current",String(S.view==="imaging"));}
   const list=orderedBy(S.tab);const nAct=orderedBy("active").length;
   $("#pcount").textContent=nAct?nAct+(nAct===1?" active":" active"):"";
@@ -657,7 +704,7 @@ function item(id,p,isEx){
   const st=stOf(p);const sd=st==="discharged"&&p.dischargedAt?"discharged "+fmtDT(p.dischargedAt).d:st==="deceased"&&p.diedAt?"died "+fmtDT(p.diedAt).d:"";
   const sub=[p.ward,sd||(last?"last "+last.d:"no samples")].filter(Boolean).join(" · ");
   const cn=chaseCount(p);
-  return `<li><button type="button" data-p="${esc(id)}" aria-current="${S.view==="patient"&&S.cur===id}"><span class="nm">${esc(p.name||"Unnamed patient")}</span><span class="bdg">${cn?`<span class="badge ch" title="Items to chase">${cn}</span>`:""}${hi+lo?`<span class="badge" title="Abnormal on latest sample">${hi+lo}</span>`:""}</span><span class="sub">${esc(sub)}</span></button></li>`;}
+  return `<li><button type="button" data-p="${esc(id)}" aria-current="${S.view==="patient"&&S.cur===id}"><span class="nm">${esc(p.name||"Unnamed patient")}${p.efc?` <span class="efctag sm">EFC</span>`:""}</span><span class="bdg">${cn?`<span class="badge ch" title="Items to chase">${cn}</span>`:""}${hi+lo?`<span class="badge" title="Abnormal on latest sample">${hi+lo}</span>`:""}</span><span class="sub">${esc(sub)}</span></button></li>`;}
 
 /* ---------- Sparkline ---------- */
 function spark(p,t){
@@ -682,7 +729,7 @@ function hasData(p,pn){return allTests(p,pn).some(t=>Object.keys((p.v||{})[t.key
 function isOpen(p,pn){if(hasData(p,pn))return true;const k=pn.key;if(k in S.openPanels)return S.openPanels[k];return pn.core;}
 
 function renderMain(){
-  const m=$("#main");if(S.view==="chase")return renderChaseAll(m);if(S.view==="oncall")return renderOnCall(m);if(S.view==="clinic")return renderClinic(m);if(S.view==="imaging")return renderImaging(m);const p=current();
+  const m=$("#main");if(S.view==="chase")return renderChaseAll(m);if(S.view==="oncall")return renderOnCall(m);if(S.view==="clinic")return renderClinic(m);if(S.view==="imaging")return renderImaging(m);if(S.view==="round")return renderRound(m);const p=current();
   if(!p&&S.tab!=="active"){m.innerHTML=`<div class="welcome"><h2>No ${S.tab} patients</h2><p>${S.tab==="discharged"?"When you discharge a patient they move here with all their results, reports and images, ready if they're readmitted.":"Patients marked as deceased are kept here for reference."}</p></div>`;return;}
   if(!p){m.innerHTML=`<div class="welcome"><h2>No patients yet</h2><p>Add a patient to start trending their bloods.</p><button class="btn primary" type="button" data-act="add">+ Add patient</button></div>`;return;}
   const exMode=isEx(S.cur);const cols=sortedCols(p);
@@ -693,15 +740,15 @@ function renderMain(){
   if(pst==="discharged")h+=`<div class="sbanner dis"><span><b>Discharged</b>${p.dischargedAt?" "+esc(fmtDT(p.dischargedAt).d)+" "+esc(fmtDT(p.dischargedAt).t):""}. All results, reports and images are kept.</span><button class="btn primary small" type="button" data-st="readmit">Readmit</button></div>`;
   if(pst==="deceased")h+=`<div class="sbanner dec"><span><b>Deceased</b>${p.diedAt?" "+esc(fmtDT(p.diedAt).d)+" "+esc(fmtDT(p.diedAt).t):""}. Record kept for reference.</span></div>`;
   if(exMode)h+=`<div class="banner">These are three example patients so you can see how trending looks across different systems. Edits here aren't saved. Add your first patient to start; the examples then disappear.</div>`;
-  h+=`<div class="phead"><div><h2>${esc(p.name||"Unnamed patient")}</h2><div class="meta">${meta.map(x=>`<span>${esc(x)}</span>`).join("")||"<span>Add details below</span>"}</div></div>
+  h+=`<div class="phead"><div><h2>${esc(p.name||"Unnamed patient")}${p.efc?` <span class="efctag">E.F.C.</span>`:""}</h2><div class="meta">${meta.map(x=>`<span>${esc(x)}</span>`).join("")||"<span>Add details below</span>"}</div></div>
    <div class="toolbar"><button class="btn" type="button" data-act="paste">Paste results</button><button class="btn primary" type="button" data-act="entry">+ Enter results</button></div></div>`;
   h+=chaseHTML(p,S.cur,false);
   h+=todoHTML(p,S.cur);
-  const openDetails=!p.name&&!exMode;
+  const openDetails=(S.detailsOpen===S.cur)||(!p.name&&!exMode);
   h+=`<details class="card" id="detailsCard" ${openDetails?"open":""}><summary>${CHEV}Patient details</summary><div class="fields">
    ${fld("name","Label (e.g. initials or bed)",p.name)}${fld("age","Age (years)",p.age||(age(p.dob)||"").replace("y",""),"number")}
    <label class="field"><span>Sex (sets ranges)</span><select id="f_sex" data-f="sex"><option value="">Not set</option><option value="M" ${p.sex==="M"?"selected":""}>Male</option><option value="F" ${p.sex==="F"?"selected":""}>Female</option></select></label>
-   ${fld("ward","Ward / bed",p.ward)}${fld("consultant","Consultant / team",p.consultant)}${fld("admitted","Admission date",p.admitted,"date")}${fld("dx","Working diagnosis",p.dx)}
+   ${fld("ward","Ward / bed",p.ward)}${fld("consultant","Consultant / team",p.consultant)}${fld("admitted","Admission date",p.admitted,"date")}${fld("dx","Working diagnosis",p.dx)}<label class="field efcf"><span>E.F.C.</span><span class="efcbox"><input type="checkbox" id="f_efc" data-f="efc"${p.efc?" checked":""}> Counts as E.F.C. in the census</span></label>
    </div><p class="hint">No names, hospital numbers or dates of birth are stored. Use initials or bed number as the label.</p></details>`;
   h+=`<div class="sectlabel"><span>Results by system · D1 → latest, left to right</span><span><button class="linkbtn" type="button" data-act="showall" aria-pressed="${S.showAll}">${S.showAll?"Hide empty tests":"Show empty tests"}</button><button class="linkbtn" type="button" data-act="expand">Expand all</button><button class="linkbtn" type="button" data-act="collapse">Collapse all</button></span></div>`;
   const hiddenP=[];let shown=0;
@@ -759,7 +806,7 @@ $("#chaseAll").addEventListener("click",()=>{S.view="chase";renderAll();window.s
 const main=$("#main");
 main.addEventListener("input",e=>{
   const el=e.target;const p=current();if(!p)return;
-  if(el.dataset.f){p[el.dataset.f]=el.value;touch(S.cur);
+  if(el.dataset.f){p[el.dataset.f]=el.type==="checkbox"?el.checked:el.value;touch(S.cur);if(el.type==="checkbox"){renderAll();return;}
     if(el.dataset.f==="name"){const h=main.querySelector(".phead h2");if(h)h.textContent=el.value||"Unnamed patient";renderSidebar();}
     return;}
   if(el.dataset.k&&el.dataset.c){
@@ -779,7 +826,7 @@ main.addEventListener("keydown",e=>{
   const tr=el.closest("tr");let nx=tr.nextElementSibling;
   while(nx){const inp=nx.querySelector(`input[data-c="${CSS.escape(el.dataset.c)}"]`);if(inp){inp.focus();inp.select();return;}nx=nx.nextElementSibling;}
 });
-main.addEventListener("toggle",e=>{const d=e.target;if(d.dataset&&d.dataset.panel){S.openPanels[d.dataset.panel]=d.open;lsSet(LS_OPEN,S.openPanels);}},true);
+main.addEventListener("toggle",e=>{const d=e.target;if(d.id==="detailsCard"){S.detailsOpen=d.open?S.cur:null;}if(d.dataset&&d.dataset.panel){S.openPanels[d.dataset.panel]=d.open;lsSet(LS_OPEN,S.openPanels);}},true);
 
 let armTimer=null;
 function arm(btn,label,fn){
@@ -1424,13 +1471,13 @@ const PRI=[["urgent","Urgent"],["soon","Soon"],["routine","Routine"]];
 const PRI_ORD={urgent:0,soon:1,routine:2};
 const CL_TASKS=["Bring forward CT","Bring forward scan","Admit","Follow up","Book bloods","Review results","Refer","Letter to GP","Book procedure","Chase report","Call patient"];
 function listId(kind){
-  if(S.mode==="supabase"&&SB.team)return SB.team.slice(0,24)+(kind==="oncall"?"0000000000a1":kind==="clinic"?"0000000000a2":"0000000000a3");
+  if(S.mode==="supabase"&&SB.team)return SB.team.slice(0,24)+(kind==="oncall"?"0000000000a1":kind==="clinic"?"0000000000a2":kind==="imaging"?"0000000000a3":"0000000000a4");
   return"list-"+kind;}
 function getList(kind,create){
   const id=listId(kind);let d=S.patients[id];
-  if(!d&&create){d=S.patients[id]=kind==="oncall"?{kind,items:[],shifts:[],shiftStart:nowLocal(),created:Date.now()}:kind==="imaging"?{kind,items:[],created:Date.now()}:{kind,pts:[],created:Date.now()};}
+  if(!d&&create){d=S.patients[id]=kind==="oncall"?{kind,items:[],shifts:[],shiftStart:nowLocal(),created:Date.now()}:(kind==="imaging"||kind==="inbox")?{kind,items:[],created:Date.now()}:{kind,pts:[],created:Date.now()};}
   return d||null;}
-function listSkeleton(kind){return kind==="oncall"?{kind,items:[],shifts:[],created:0}:kind==="imaging"?{kind,items:[],created:0}:{kind,pts:[],created:0};}
+function listSkeleton(kind){return kind==="oncall"?{kind,items:[],shifts:[],created:0}:(kind==="imaging"||kind==="inbox")?{kind,items:[],created:0}:{kind,pts:[],created:0};}
 function ocOpen(){const d=getList("oncall");return d?(d.items||[]).filter(x=>!x.done):[];}
 function clOpenTasks(){const d=getList("clinic");let n=0;if(d)(d.pts||[]).filter(x=>!x.archived).forEach(x=>n+=(x.tasks||[]).filter(t=>!t.done).length);return n;}
 function tm(dt){return dt?fmtDT(dt).t:"";}
@@ -1599,6 +1646,62 @@ main.addEventListener("click",ev=>{
   else return;
   imgSave(r);});
 $("#imBtn").addEventListener("click",()=>{S.view="imaging";renderAll();window.scrollTo(0,0);});
+
+/* ---------- Ward round: quick jot + all patients on one screen ---------- */
+function bedNum(p){const m=((p.ward||"")+" "+(p.name||"")).match(/\bbed\s*(\d+)\b/i);return m?m[1]:null;}
+function suggestPatient(text){
+  const t=String(text||"");const act=ordered().filter(x=>stOf(x[1])==="active");const hits=new Set();
+  const mb=t.match(/^\s*(?:bed|b)?\s*(\d{1,3})\s*[:\-–.)]/i)||t.match(/\bbed\s*(\d{1,3})\b/i);
+  if(mb)for(const [id,p] of act)if(bedNum(p)===mb[1])hits.add(id);
+  if(!hits.size){const low=t.toLowerCase();
+    for(const [id,p] of act){const n=(p.name||"").trim().toLowerCase();if(n.length>=2&&(low.startsWith(n)||low.includes(n+":")||low.includes(n+" -")))hits.add(id);}}
+  return hits.size===1?[...hits][0]:"";}
+function stripPrefix(text,pid){
+  let t=String(text||"");const p=S.patients[pid];
+  t=t.replace(/^\s*(?:bed|b)?\s*\d{1,3}\s*[:\-–.)]\s*/i,"");
+  if(p&&p.name){const n=p.name.trim();if(t.toLowerCase().startsWith(n.toLowerCase()))t=t.slice(n.length).replace(/^\s*[:\-–.]\s*/,"");}
+  return t.trim()||String(text).trim();}
+function inboxItems(){const d=getList("inbox");return(d&&d.items)||[];}
+function renderRound(m){
+  const act=ordered().filter(x=>stOf(x[1])==="active");const inbox=inboxItems();const t=todayStr();
+  const opts=pid=>`<option value="">Assign to…</option>${act.map(([id,p])=>`<option value="${esc(id)}"${id===pid?" selected":""}>${esc(p.name||"Unnamed")}${p.ward?" · "+esc(p.ward):""}</option>`).join("")}`;
+  const matched=inbox.filter(x=>x.sugg&&S.patients[x.sugg]).length;
+  let h=`<section class="round"><div class="ochead"><h2>Ward round</h2><span class="tcount">${act.length} active patients · ${inbox.length} unassigned</span></div>
+  ${censusHTML(true)}<div class="rqbox"><h3>Quick jot</h3><p class="shint">Type a task and press Enter, again and again. Start with the bed or label, e.g. <b>12: repeat U&amp;E</b> or <b>${esc((act[0]&&act[0][1].name)||"AB")}: CXR</b>, and it will suggest the patient.</p>
+    <form id="rqForm" class="rqform"><input id="rq_text" autocomplete="off" enterkeyhint="send" placeholder="e.g. 12: repeat U&E, chase CT report" aria-label="Quick task"><button class="btn primary small" type="submit">Add</button></form>
+    ${inbox.length?`<ul class="rqlist">${inbox.map(x=>`<li class="rqitem"><span class="rqtext">${esc(x.text)}</span><select data-rqsel="${esc(x.id)}" aria-label="Patient for ${esc(x.text)}">${opts(x.sugg&&S.patients[x.sugg]?x.sugg:"")}</select><button class="btn small" type="button" data-rqassign="${esc(x.id)}">Assign</button><button class="rmrow" type="button" data-rqdel="${esc(x.id)}" aria-label="Delete">✕</button></li>`).join("")}</ul>
+      <div class="rqbar">${matched?`<button class="btn primary small" type="button" data-rqall>Assign all matched (${matched})</button>`:""}<span class="shint">Each task goes into that patient's Today's jobs.</span></div>`:""}
+  </div>
+  <h3 class="imh">Patients <span>${act.length}</span></h3>`;
+  h+=act.length?act.map(([id,p])=>{const jobs=(p.todo||[]).filter(x=>x.day===t||(x.day<t&&!x.done)).sort((a,b)=>(a.done-b.done));const open=jobs.filter(x=>!x.done).length;
+    return`<article class="rqpt" data-rqpid="${esc(id)}"><div class="rqhead"><button type="button" class="imwho" data-open="${esc(id)}"><b>${esc(p.name||"Unnamed patient")}</b></button>${p.efc?`<span class="efctag sm">EFC</span>`:""}<span class="immeta">${esc([p.ward,p.dx].filter(Boolean).join(" · "))}</span><span class="tcount">${open} to do</span></div>
+      ${jobs.length?`<ul class="tlist">${jobs.map(x=>todoItem(id,x,x.day<t)).join("")}</ul>`:""}
+      <form class="rqpadd" data-pid="${esc(id)}"><input list="dl_jobs" autocomplete="off" enterkeyhint="send" placeholder="Add job for ${esc(p.name||"patient")}" aria-label="Add job for ${esc(p.name||"patient")}"><button class="btn small" type="submit">Add</button></form></article>`;}).join("")+`<datalist id="dl_jobs">${JOBS.map(j=>`<option value="${esc(j)}">`).join("")}</datalist>`
+    :`<p class="tnone">No active ward patients yet. Quick jot still works; assign tasks once patients are added.</p>`;
+  m.innerHTML=h+`</section>`;
+  if(S.rqFocus){const f=S.rqFocus;S.rqFocus=null;setTimeout(()=>{const el=f==="#rq_text"?document.getElementById("rq_text"):m.querySelector(`[data-rqpid="${CSS.escape(f)}"] .rqpadd input`);if(el)el.focus();},0);}}
+function assignInbox(id,pid){
+  const d=getList("inbox");if(!d)return false;const x=d.items.find(y=>y.id===id);const p=S.patients[pid];if(!x||!p)return false;
+  p.todo=p.todo||[];p.todo.push({id:uid().slice(0,12),day:todayStr(),text:stripPrefix(x.text,pid).slice(0,200),done:false,created:nowLocal()});
+  d.items=d.items.filter(y=>y.id!==id);touch(pid);return true;}
+main.addEventListener("submit",ev=>{const f=ev.target;
+  if(f.id==="rqForm"){ev.preventDefault();const inp=f.querySelector("#rq_text");const txt=inp.value.trim();if(!txt){inp.focus();return;}
+    const d=getList("inbox",true);d.items.push({id:uid().slice(0,12),text:txt.slice(0,200),sugg:suggestPatient(txt),at:nowLocal()});
+    touch(listId("inbox"));S.rqFocus="#rq_text";renderAll();return;}
+  if(f.classList.contains("rqpadd")){ev.preventDefault();const inp=f.querySelector("input");const txt=inp.value.trim();const pid=f.dataset.pid;const p=S.patients[pid];if(!txt||!p){inp.focus();return;}
+    p.todo=p.todo||[];p.todo.push({id:uid().slice(0,12),day:todayStr(),text:txt.slice(0,200),done:false,created:nowLocal()});
+    touch(pid);S.rqFocus=pid;renderAll();}});
+main.addEventListener("click",ev=>{
+  const b=ev.target.closest("[data-rqassign],[data-rqdel],[data-rqall]");if(!b)return;const d=getList("inbox");if(!d)return;
+  if(b.dataset.rqassign){const sel=main.querySelector(`[data-rqsel="${CSS.escape(b.dataset.rqassign)}"]`);const pid=sel&&sel.value;
+    if(!pid){sel&&sel.focus();sel&&sel.classList.add("need");return;}
+    if(assignInbox(b.dataset.rqassign,pid)){touch(listId("inbox"));renderAll();}return;}
+  if(b.dataset.rqdel){if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="Delete?";setTimeout(()=>{if(b.isConnected){b.classList.remove("armed");b.textContent="✕";}},3000);return;}
+    d.items=d.items.filter(y=>y.id!==b.dataset.rqdel);touch(listId("inbox"));renderAll();return;}
+  if(b.dataset.rqall!=null){let n=0;for(const x of d.items.slice()){const sel=main.querySelector(`[data-rqsel="${CSS.escape(x.id)}"]`);const pid=(sel&&sel.value)||x.sugg;if(pid&&assignInbox(x.id,pid))n++;}
+    if(n){touch(listId("inbox"));renderAll();}}});
+main.addEventListener("change",ev=>{const s=ev.target;if(!s.dataset||!s.dataset.rqsel)return;const d=getList("inbox");const x=d&&d.items.find(y=>y.id===s.dataset.rqsel);if(x){x.sugg=s.value;touch(listId("inbox"));s.classList.remove("need");}});
+$("#rqBtn").addEventListener("click",()=>{S.view="round";renderAll();window.scrollTo(0,0);});
 
 /* ---------- Boot ---------- */
 function useLocal(){
