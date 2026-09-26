@@ -15,7 +15,7 @@
   --bg:#F2F5F4;--surface:#FFFFFF;--surface-2:#EDF2F0;--ink:#15201C;--muted:#5A6762;--line:#D5DDD9;--line-2:#E6ECE9;
   --accent:#23665A;--accent-ink:#FFFFFF;--accent-soft:#DCEBE7;
   --hi:#B42318;--hi-bg:#FCEBE9;--lo:#1D5FA8;--lo-bg:#E7EFFA;--warn-bg:#FFF6DD;--warn-ink:#6B4E00;
-  --ch-bg:#FFF2CC;--ch-line:#E3B341;--ch-ink:#3F2E00;--ch-strong:#8A5A00;--ch-item:#FFFBEF;
+  --ch-bg:#FFF2CC;--ch-line:#E3B341;--ch-ink:#3F2E00;--ch-strong:#8A5A00;--ch-item:#FFFBEF;--im:#6A45B8;
   --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
@@ -23,12 +23,12 @@
   --bg:#0E1412;--surface:#151D1A;--surface-2:#1B2521;--ink:#E3EBE7;--muted:#93A29C;--line:#2A3631;--line-2:#222D29;
   --accent:#62B4A2;--accent-ink:#08110E;--accent-soft:#1D3530;
   --hi:#FF8C7C;--hi-bg:#3A1C18;--lo:#8DBBF2;--lo-bg:#152539;--warn-bg:#352C12;--warn-ink:#F1D98A;
-  --ch-bg:#2A220E;--ch-line:#8C6B1C;--ch-ink:#F4E2AE;--ch-strong:#F2C14E;--ch-item:#211B0C;}}
+  --ch-bg:#2A220E;--ch-line:#8C6B1C;--ch-ink:#F4E2AE;--ch-strong:#F2C14E;--ch-item:#211B0C;--im:#B9A2F2;}}
 :root[data-theme="dark"]{color-scheme:dark;
   --bg:#0E1412;--surface:#151D1A;--surface-2:#1B2521;--ink:#E3EBE7;--muted:#93A29C;--line:#2A3631;--line-2:#222D29;
   --accent:#62B4A2;--accent-ink:#08110E;--accent-soft:#1D3530;
   --hi:#FF8C7C;--hi-bg:#3A1C18;--lo:#8DBBF2;--lo-bg:#152539;--warn-bg:#352C12;--warn-ink:#F1D98A;
-  --ch-bg:#2A220E;--ch-line:#8C6B1C;--ch-ink:#F4E2AE;--ch-strong:#F2C14E;--ch-item:#211B0C;}
+  --ch-bg:#2A220E;--ch-line:#8C6B1C;--ch-ink:#F4E2AE;--ch-strong:#F2C14E;--ch-item:#211B0C;--im:#B9A2F2;}
 
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -161,7 +161,7 @@ td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color
 .chead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .chead h3{margin:0;font-size:17px;font-weight:700;letter-spacing:-.01em;color:var(--ch-strong)}
 .chead .ccount{font-family:var(--mono);font-size:12px}
-.chead .cover{font-family:var(--mono);font-size:11.5px;background:var(--hi);color:#fff;border-radius:10px;padding:1px 8px}
+.ochead .cover,.chead .cover{font-family:var(--mono);font-size:11.5px;background:var(--hi);color:#fff;border-radius:10px;padding:1px 8px}
 .chead .cpt{margin-left:auto}
 .clist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .citem{display:grid;grid-template-columns:24px auto 1fr auto auto;gap:10px;align-items:center;background:var(--ch-item);border:1px solid color-mix(in srgb,var(--ch-line) 55%,transparent);border-radius:8px;padding:8px 10px}
@@ -239,6 +239,76 @@ td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color
 .tday li.ok .mk{color:var(--accent);font-weight:700}
 .tday li.no{color:var(--muted)}
 .tday .tm{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+.navrow{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.navbtn{justify-content:space-between;font-weight:600;font-size:13px;padding:7px 10px}
+.navbtn .n{font-family:var(--mono);border-radius:10px;padding:0 7px;font-size:12px}
+.oncallbtn{background:var(--hi-bg);border-color:color-mix(in srgb,var(--hi) 35%,var(--line));color:var(--hi)}
+.oncallbtn .n{background:var(--hi);color:var(--surface)}
+.clinicbtn{background:var(--lo-bg);border-color:color-mix(in srgb,var(--lo) 35%,var(--line));color:var(--lo)}
+.clinicbtn .n{background:var(--lo);color:var(--surface)}
+.navbtn[aria-current="true"]{outline:2px solid currentColor;outline-offset:-1px}
+.oc,.cl{display:flex;flex-direction:column;gap:12px}
+.ochead{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ochead h2{margin:0;font-size:22px;font-weight:600;letter-spacing:-.015em}
+.oc .ochead h2{color:var(--hi)}.cl .ochead h2{color:var(--lo)}
+.ocadd{display:grid;grid-template-columns:110px 130px 1fr 170px auto;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px}
+.ocadd select,.ocadd input{border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:8px 10px;min-width:0}
+.oclist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.ocitem{display:grid;grid-template-columns:26px 74px 1fr auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left-width:4px;border-radius:8px;padding:8px 10px}
+.ocitem.urgent{border-left-color:var(--hi)}.ocitem.soon{border-left-color:#C08A00}.ocitem.routine{border-left-color:var(--line-2)}
+.ocitem.done{opacity:.75;border-left-color:var(--line)}.ocitem.done .octext{text-decoration:line-through;color:var(--muted)}
+.ocitem .tbox{border-color:var(--ink)}.ocitem .tbox.on{background:var(--ink);border-color:var(--ink);color:var(--surface)}
+.ocpri{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;text-align:center;border-radius:6px;padding:2px 0}
+.ocpri.urgent{background:var(--hi);color:#fff}.ocpri.soon{background:var(--warn-bg);color:var(--warn-ink)}.ocpri.routine{background:var(--surface-2);color:var(--muted)}
+.octext{min-width:0}.octext em{display:block;font-style:normal;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.ocfoot{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ocfoot .shint{flex:1 1 240px}
+.btn.armed{background:var(--hi);color:#fff;border-color:var(--hi)}
+.cltabs{margin-left:auto;display:inline-flex;background:var(--surface-2);border-radius:8px;padding:3px;gap:2px}
+.cltabs button{border:0;background:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:13px;color:var(--muted)}
+.cltabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);font-weight:600}
+.clform{display:flex;flex-direction:column;gap:10px;padding:4px 16px 16px}
+.clform .field input,.clform .field select{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:7px 9px;min-width:0}
+.fields3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.clform .btn{align-self:flex-start}
+.clcard{background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--lo);border-radius:10px;padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.clhead{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.clhead h3{margin:0;font-size:16px}
+.clhead .meta{margin:2px 0 0}
+.cldx{margin:2px 0 0;font-size:13.5px}
+.clcount{font-family:var(--mono);font-size:12px;background:var(--lo-bg);color:var(--lo);border-radius:10px;padding:1px 8px;white-space:nowrap}
+.clcount.ok{background:var(--accent-soft);color:var(--accent)}
+.clcard .titem{background:var(--lo-bg)}.clcard .titem.done{background:transparent}
+.clcard .tbox{border-color:var(--lo)}.clcard .tbox.on{background:var(--lo);border-color:var(--lo)}
+.ttext em.over{color:var(--hi);font-weight:600}
+.clquick{display:flex;flex-wrap:wrap;gap:6px}
+.qchip{border:1px dashed var(--lo);background:none;color:var(--lo);border-radius:999px;padding:3px 10px;font-size:12.5px;cursor:pointer}
+.qchip:hover{background:var(--lo-bg)}
+.cltadd{display:grid;grid-template-columns:1fr 150px auto;gap:8px}
+.cltadd input{border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:7px 9px;min-width:0}
+.clfoot{display:flex;gap:14px;flex-wrap:wrap;border-top:1px solid var(--line-2);padding-top:8px}
+.linkbtn.danger{color:var(--hi)}
+@media (max-width:760px){.ocadd{grid-template-columns:1fr 1fr}.ocadd #oc_text{grid-column:1/-1;order:-1}.ocadd button{grid-column:1/-1}.ocitem{grid-template-columns:26px 1fr auto}.ocitem .ocpri{grid-column:2;grid-row:2;justify-self:start;padding:1px 8px}.ocitem .octext{grid-column:2;grid-row:1}.cltadd{grid-template-columns:1fr auto}.cltadd input[type=date]{grid-column:1/-1;order:2}.fields3{grid-template-columns:1fr 1fr}}
+.imgbtn{background:color-mix(in srgb,var(--im) 12%,var(--surface));border-color:color-mix(in srgb,var(--im) 40%,var(--line));color:var(--im)}
+.imgbtn .n{background:var(--im);color:var(--surface)}
+.img{display:flex;flex-direction:column;gap:12px}
+.img .ochead h2{color:var(--im)}
+.imadd{display:grid;grid-template-columns:130px 1fr 190px 100px auto;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px}
+.imadd select,.imadd input{border:1px solid var(--line);background:var(--bg);border-radius:7px;padding:8px 10px;min-width:0}
+.imh{margin:6px 0 0;font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.imh span{font-family:var(--mono);margin-left:6px}
+.imlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.imrow{display:grid;grid-template-columns:78px 1fr auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--im);border-radius:8px;padding:8px 10px}
+.imrow.urgent{border-left-color:var(--hi)}
+.imsrc{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;text-align:center;border-radius:6px;padding:2px 4px}
+.imsrc.ward{background:var(--accent-soft);color:var(--accent)}.imsrc.clinic{background:var(--lo-bg);color:var(--lo)}.imsrc.oncall{background:var(--hi-bg);color:var(--hi)}.imsrc.list{background:color-mix(in srgb,var(--im) 14%,var(--surface));color:var(--im)}
+.imbody{min-width:0;display:flex;flex-direction:column;gap:2px}
+.immeta{font-size:12.5px;color:var(--muted)}
+.immeta strong{color:var(--ink)}
+.imwho{border:0;background:none;padding:0;color:var(--ink);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:2px;cursor:pointer;font:inherit}
+.imact{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.imdate{border:1px solid var(--line);background:var(--bg);border-radius:6px;padding:4px 6px;font-size:12.5px;width:135px}
+@media (max-width:760px){.imadd{grid-template-columns:1fr 1fr}.imadd #im_study{grid-column:1/-1;order:-1}.imadd button{grid-column:1/-1}.imrow{grid-template-columns:1fr}.imsrc{justify-self:start;padding:1px 8px}.imact{justify-content:flex-start}}
 .chip.pendc{background:var(--warn-bg);color:var(--warn-ink)}
 .chip.cntc{background:var(--surface-2);color:var(--muted)}
 .replist{display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -327,6 +397,8 @@ td.v.hi::after{content:"↑";color:var(--hi)} td.v.lo::after{content:"↓";color
     <div class="brand"><h1>Ward Bloods</h1><span id="pcount"></span></div>
     <button class="btn primary" id="addPatient" type="button">+ Add patient</button>
     <button class="btn chasebtn" id="chaseAll" type="button" aria-current="false"><span>Ward chase &amp; jobs</span><span class="n" id="chaseN">0</span></button>
+    <div class="navrow"><button class="btn navbtn oncallbtn" id="ocBtn" type="button" aria-current="false"><span>On-call</span><span class="n" id="ocN">0</span></button><button class="btn navbtn clinicbtn" id="clBtn" type="button" aria-current="false"><span>Clinic</span><span class="n" id="clN">0</span></button></div>
+    <button class="btn navbtn imgbtn" id="imBtn" type="button" aria-current="false"><span>Imaging to book</span><span class="n" id="imN">0</span></button>
     <div class="stabs" id="stabs" role="tablist" aria-label="Patient lists"></div>
     <ul class="plist" id="plist"></ul>
     <div class="status" id="status"><span class="dot"></span><span id="statusText">Loading…</span><button class="linkbtn" type="button" id="signOut" hidden style="margin-left:auto">Lock</button></div>
@@ -528,7 +600,7 @@ function refreshStatus(){
   else if(S.mode==="memory")setStatus("local","Not saved: storage unavailable");
   else setStatus("busy","Loading…");}
 
-function ordered(){return Object.entries(S.patients).sort((a,b)=>(a[1].created||0)-(b[1].created||0));}
+function ordered(){return Object.entries(S.patients).filter(x=>x[1]&&!x[1].kind).sort((a,b)=>(a[1].created||0)-(b[1].created||0));}
 const stOf=p=>(p&&p.status)||"active";
 function orderedBy(st){return ordered().filter(x=>stOf(x[1])===st);}
 const ST_LABEL={active:"Active",discharged:"Discharged",deceased:"Deceased"};
@@ -566,7 +638,10 @@ async function removePatient(id){
 /* ---------- Sidebar ---------- */
 function renderSidebar(){
   {let n=0;const all=ordered().length?ordered().map(x=>x[1]).filter(p=>stOf(p)!=="deceased"):Object.values(S.examples||{});all.forEach(p=>n+=chaseCount(p));
-   const cn=document.getElementById("chaseN");if(cn)cn.textContent=n;const cb=document.getElementById("chaseAll");if(cb)cb.setAttribute("aria-current",String(S.view==="chase"));}
+   const cn=document.getElementById("chaseN");if(cn)cn.textContent=n;const cb=document.getElementById("chaseAll");if(cb)cb.setAttribute("aria-current",String(S.view==="chase"));
+   const oN=document.getElementById("ocN");if(oN)oN.textContent=ocOpen().length;const cN=document.getElementById("clN");if(cN)cN.textContent=clOpenTasks();
+   const ob=document.getElementById("ocBtn");if(ob)ob.setAttribute("aria-current",String(S.view==="oncall"));const clb=document.getElementById("clBtn");if(clb)clb.setAttribute("aria-current",String(S.view==="clinic"));
+   const iN=document.getElementById("imN");if(iN)iN.textContent=imgCount();const ib=document.getElementById("imBtn");if(ib)ib.setAttribute("aria-current",String(S.view==="imaging"));}
   const list=orderedBy(S.tab);const nAct=orderedBy("active").length;
   $("#pcount").textContent=nAct?nAct+(nAct===1?" active":" active"):"";
   $("#stabs").innerHTML=["active","discharged","deceased"].map(t=>{const n=t==="active"&&!ordered().length&&S.examples?Object.keys(S.examples).length:orderedBy(t).length;
@@ -582,7 +657,7 @@ function item(id,p,isEx){
   const st=stOf(p);const sd=st==="discharged"&&p.dischargedAt?"discharged "+fmtDT(p.dischargedAt).d:st==="deceased"&&p.diedAt?"died "+fmtDT(p.diedAt).d:"";
   const sub=[p.ward,sd||(last?"last "+last.d:"no samples")].filter(Boolean).join(" · ");
   const cn=chaseCount(p);
-  return `<li><button type="button" data-p="${esc(id)}" aria-current="${S.view!=="chase"&&S.cur===id}"><span class="nm">${esc(p.name||"Unnamed patient")}</span><span class="bdg">${cn?`<span class="badge ch" title="Items to chase">${cn}</span>`:""}${hi+lo?`<span class="badge" title="Abnormal on latest sample">${hi+lo}</span>`:""}</span><span class="sub">${esc(sub)}</span></button></li>`;}
+  return `<li><button type="button" data-p="${esc(id)}" aria-current="${S.view==="patient"&&S.cur===id}"><span class="nm">${esc(p.name||"Unnamed patient")}</span><span class="bdg">${cn?`<span class="badge ch" title="Items to chase">${cn}</span>`:""}${hi+lo?`<span class="badge" title="Abnormal on latest sample">${hi+lo}</span>`:""}</span><span class="sub">${esc(sub)}</span></button></li>`;}
 
 /* ---------- Sparkline ---------- */
 function spark(p,t){
@@ -607,7 +682,7 @@ function hasData(p,pn){return allTests(p,pn).some(t=>Object.keys((p.v||{})[t.key
 function isOpen(p,pn){if(hasData(p,pn))return true;const k=pn.key;if(k in S.openPanels)return S.openPanels[k];return pn.core;}
 
 function renderMain(){
-  const m=$("#main");if(S.view==="chase")return renderChaseAll(m);const p=current();
+  const m=$("#main");if(S.view==="chase")return renderChaseAll(m);if(S.view==="oncall")return renderOnCall(m);if(S.view==="clinic")return renderClinic(m);if(S.view==="imaging")return renderImaging(m);const p=current();
   if(!p&&S.tab!=="active"){m.innerHTML=`<div class="welcome"><h2>No ${S.tab} patients</h2><p>${S.tab==="discharged"?"When you discharge a patient they move here with all their results, reports and images, ready if they're readmitted.":"Patients marked as deceased are kept here for reference."}</p></div>`;return;}
   if(!p){m.innerHTML=`<div class="welcome"><h2>No patients yet</h2><p>Add a patient to start trending their bloods.</p><button class="btn primary" type="button" data-act="add">+ Add patient</button></div>`;return;}
   const exMode=isEx(S.cur);const cols=sortedCols(p);
@@ -907,7 +982,7 @@ const REP={
  micro:{title:"Microbiology & cultures",sys:"Infection",add:"+ Add culture / micro",empty:"No cultures or micro results yet."},
  path:{title:"Pathology & histology",sys:"Tissue / cytology",add:"+ Add pathology",empty:"No pathology or biopsy results yet."},
  rad:{title:"Radiology & imaging",sys:"Imaging",add:"+ Add imaging",empty:"No imaging reports yet."}};
-const STATUS={micro:["Pending","Preliminary","Final"],path:["Pending","Reported"],rad:["Requested","Done, awaiting report","Reported"]};
+const STATUS={micro:["Pending","Preliminary","Final"],path:["Pending","Reported"],rad:["Requested","Booked","Done, awaiting report","Reported"]};
 const DL={
  spec:["Blood culture (peripheral)","Blood culture (line)","Urine (MSU)","Urine (catheter)","Sputum","Wound swab","Pus / aspirate","CSF","Stool","Throat swab","Nasal / MRSA screen","Pleural fluid","Ascitic fluid","Joint fluid","Tissue","Line tip","High vaginal swab","Other"],
  mtest:["Culture & sensitivity","Gram stain","Microscopy","PCR","AFB smear","GeneXpert MTB/RIF","Malaria film","Antigen test","Fungal culture","C. difficile toxin","Viral PCR","Other"],
@@ -1145,7 +1220,11 @@ async function sbFlush(id){
   try{
     if(!SB.snap[id]){
       const {data,error}=await SB.client.from("patients").insert({id,team_id:SB.team,doc:sent}).select("doc").single();
-      if(error)throw error;server=data.doc;}
+      if(error&&String(error.code)==="23505"&&sent.kind){
+        const ex=await SB.client.from("patients").select("doc").eq("id",id).single();if(ex.error)throw ex.error;
+        const ops=diffDoc(listSkeleton(sent.kind),sent).filter(o=>!(o.op==="set"&&o.path.length===1&&["kind","created","updated","shiftStart"].includes(o.path[0])));
+        const r2=await SB.client.rpc("patch_patient",{p_id:id,p_ops:ops});if(r2.error)throw r2.error;server=r2.data;}
+      else{if(error)throw error;server=data.doc;}}
     else{const ops=diffDoc(SB.snap[id],sent);
       if(ops.length){const {data,error}=await SB.client.rpc("patch_patient",{p_id:id,p_ops:ops});if(error)throw error;server=data;}
       else server=SB.snap[id];}}
@@ -1169,6 +1248,7 @@ async function sbPull(id){
       if(S.cur===id){const l=ordered();if(l.length)S.cur=l[0][0];else showExamples();renderAll();return;}}
     renderSidebar();return;}
   if(!p){S.patients[id]=clone(data.doc);SB.snap[id]=clone(data.doc);
+    if(data.doc&&data.doc.kind){renderSidebar();if(S.view===data.doc.kind&&!main.contains(document.activeElement))renderMain();return;}
     if(isEx(S.cur)){S.examples=null;S.cur=id;renderAll();return;}renderSidebar();return;}
   const pending=S.dirty.has(id)?diffDoc(SB.snap[id]||{},clone(p)):[];
   SB.snap[id]=clone(data.doc);replaceInPlace(p,pending.length?applyOps(data.doc,pending):data.doc);
@@ -1338,6 +1418,187 @@ main.addEventListener("submit",ev=>{const f=ev.target;if(f.id!=="todoForm")retur
   const pid=f.dataset.pid;const p=patientById(pid);if(!p)return;const inp=f.querySelector("#t_text");const txt=inp.value.trim();if(!txt){inp.focus();return;}
   p.todo=p.todo||[];p.todo.push({id:uid().slice(0,12),day:todayStr(),text:txt.slice(0,200),done:false,created:nowLocal()});
   touch(pid);renderAll();setTimeout(()=>{const i=document.getElementById("t_text");if(i)i.focus();},0);});
+
+/* ---------- On-call tasks and Clinic list (team-wide lists) ---------- */
+const PRI=[["urgent","Urgent"],["soon","Soon"],["routine","Routine"]];
+const PRI_ORD={urgent:0,soon:1,routine:2};
+const CL_TASKS=["Bring forward CT","Bring forward scan","Admit","Follow up","Book bloods","Review results","Refer","Letter to GP","Book procedure","Chase report","Call patient"];
+function listId(kind){
+  if(S.mode==="supabase"&&SB.team)return SB.team.slice(0,24)+(kind==="oncall"?"0000000000a1":kind==="clinic"?"0000000000a2":"0000000000a3");
+  return"list-"+kind;}
+function getList(kind,create){
+  const id=listId(kind);let d=S.patients[id];
+  if(!d&&create){d=S.patients[id]=kind==="oncall"?{kind,items:[],shifts:[],shiftStart:nowLocal(),created:Date.now()}:kind==="imaging"?{kind,items:[],created:Date.now()}:{kind,pts:[],created:Date.now()};}
+  return d||null;}
+function listSkeleton(kind){return kind==="oncall"?{kind,items:[],shifts:[],created:0}:kind==="imaging"?{kind,items:[],created:0}:{kind,pts:[],created:0};}
+function ocOpen(){const d=getList("oncall");return d?(d.items||[]).filter(x=>!x.done):[];}
+function clOpenTasks(){const d=getList("clinic");let n=0;if(d)(d.pts||[]).filter(x=>!x.archived).forEach(x=>n+=(x.tasks||[]).filter(t=>!t.done).length);return n;}
+function tm(dt){return dt?fmtDT(dt).t:"";}
+
+/* ----- On-call view ----- */
+function renderOnCall(m){
+  const d=getList("oncall");const items=(d&&d.items)||[];
+  const open=items.filter(x=>!x.done).sort((a,b)=>(PRI_ORD[a.pri]??2)-(PRI_ORD[b.pri]??2)||((a.at||"")<(b.at||"")?-1:1));
+  const done=items.filter(x=>x.done).sort((a,b)=>(a.doneAt||"")<(b.doneAt||"")?1:-1);
+  const urg=open.filter(x=>x.pri==="urgent").length;
+  const start=d&&d.shiftStart?fmtDT(d.shiftStart):null;
+  let h=`<section class="oc"><div class="ochead"><h2>On-call tasks</h2><span class="tcount">${open.length} open${start?` · shift started ${esc(start.d)} ${esc(start.t)}`:""}</span>${urg?`<span class="cover">${urg} urgent</span>`:""}</div>
+  <form class="ocadd" id="ocForm"><select id="oc_pri" aria-label="Priority">${PRI.map(([k,l])=>`<option value="${k}"${k==="soon"?" selected":""}>${l}</option>`).join("")}</select>
+    <input id="oc_loc" autocomplete="off" placeholder="Ward / bed" aria-label="Ward or bed">
+    <input id="oc_text" autocomplete="off" placeholder="Task, e.g. review K⁺ 6.1, rechart fluids, cannula" aria-label="Task">
+    <input id="oc_from" autocomplete="off" placeholder="From (e.g. RN Ward 5)" aria-label="Who called">
+    <button class="btn primary small" type="submit">Add</button></form>`;
+  h+=open.length?`<ul class="oclist">${open.map(x=>`<li class="ocitem ${esc(x.pri||"routine")}"><button class="tbox" type="button" data-ocdone="${esc(x.id)}" aria-label="Mark done: ${esc(x.text)}"></button><span class="ocpri ${esc(x.pri||"routine")}">${esc((PRI.find(p=>p[0]===x.pri)||PRI[2])[1])}</span><span class="octext">${x.loc?`<b>${esc(x.loc)}</b> · `:""}${esc(x.text)}<em>${x.from?esc(x.from)+" · ":""}${esc(tm(x.at))}</em></span><button class="rmrow" type="button" data-ocdel="${esc(x.id)}" aria-label="Delete">✕</button></li>`).join("")}</ul>`
+    :`<p class="tnone">No open tasks. Add bleeps as they come in; urgent ones stay at the top.</p>`;
+  if(done.length)h+=`<details class="cdone" open><summary>Done this shift (${done.length})</summary><ul class="oclist">${done.map(x=>`<li class="ocitem done"><button class="tbox on" type="button" data-ocdone="${esc(x.id)}" aria-label="Mark not done">✓</button><span class="ocpri ${esc(x.pri||"routine")}">${esc((PRI.find(p=>p[0]===x.pri)||PRI[2])[1])}</span><span class="octext">${x.loc?`<b>${esc(x.loc)}</b> · `:""}${esc(x.text)}<em>done ${esc(tm(x.doneAt))}</em></span><button class="rmrow" type="button" data-ocdel="${esc(x.id)}" aria-label="Delete">✕</button></li>`).join("")}</ul></details>`;
+  h+=`<div class="ocfoot"><button class="btn small" type="button" data-occopy>Copy handover list</button><button class="btn small" type="button" data-ocend>End shift</button><span class="shint" id="ocmsg">End shift files the done tasks under Previous shifts. Open tasks stay for the next person.</span></div>`;
+  const sh=((d&&d.shifts)||[]).slice().sort((a,b)=>(a.end||"")<(b.end||"")?1:-1);
+  if(sh.length)h+=`<details class="thist"><summary>Previous shifts (${sh.length})</summary>${sh.map(s=>`<div class="tday"><h5>${esc(fmtDT(s.start).d)} ${esc(fmtDT(s.start).t)} – ${esc(fmtDT(s.end).d)} ${esc(fmtDT(s.end).t)} <span>${(s.items||[]).length} done</span></h5><ul>${(s.items||[]).map(x=>`<li class="ok"><span class="mk">✓</span><span>${x.loc?esc(x.loc)+" · ":""}${esc(x.text)}</span><span class="tm">${esc(tm(x.doneAt))}</span></li>`).join("")}</ul></div>`).join("")}</details>`;
+  m.innerHTML=h+`</section>`;}
+
+/* ----- Clinic view ----- */
+function renderClinic(m){
+  const d=getList("clinic");const pts=((d&&d.pts)||[]);
+  const tab=S.clTab||"open";const shown=pts.filter(x=>tab==="open"?!x.archived:x.archived).sort((a,b)=>(a.seen||"")<(b.seen||"")?1:-1);
+  let h=`<section class="cl"><div class="ochead"><h2>Clinic list</h2><span class="tcount">${clOpenTasks()} tasks open</span>
+    <span class="cltabs" role="tablist"><button type="button" role="tab" data-cltab="open" aria-selected="${tab==="open"}">Open (${pts.filter(x=>!x.archived).length})</button><button type="button" role="tab" data-cltab="done" aria-selected="${tab==="done"}">Completed (${pts.filter(x=>x.archived).length})</button></span></div>`;
+  if(tab==="open")h+=`<details class="card clnew"${pts.length?"":" open"}><summary>${CHEV}Add clinic patient</summary><form class="clform" id="clForm">
+    <div class="fields2"><label class="field"><span>Label (initials / clinic no.)</span><input id="cl_label" autocomplete="off" required></label><label class="field"><span>Clinic</span><input id="cl_clinic" autocomplete="off" placeholder="e.g. Medical OPD, Diabetes"></label></div>
+    <div class="fields3"><label class="field"><span>Seen</span><input id="cl_seen" type="date" value="${todayStr()}"></label><label class="field"><span>Age</span><input id="cl_age" type="number" inputmode="numeric"></label><label class="field"><span>Sex</span><select id="cl_sex"><option value="">–</option><option>M</option><option>F</option></select></label></div>
+    <label class="field"><span>Reason / diagnosis</span><input id="cl_dx" autocomplete="off"></label>
+    <button class="btn primary small" type="submit">Add patient</button></form></details>`;
+  h+=shown.length?shown.map(x=>clCard(x,tab)).join(""):`<p class="tnone">${tab==="open"?"No clinic patients yet. Add one above, then add tasks like bring forward CT, admit or follow up.":"No completed clinic patients yet."}</p>`;
+  h+=`<datalist id="dl_cl">${CL_TASKS.map(t=>`<option value="${esc(t)}">`).join("")}</datalist>`;
+  m.innerHTML=h+`</section>`;}
+function clCard(x,tab){
+  const tasks=(x.tasks||[]).slice().sort((a,b)=>(a.done-b.done)||((a.due||"9")<(b.due||"9")?-1:1));
+  const open=tasks.filter(t=>!t.done).length;
+  const meta=[[x.age?x.age+"y":"",x.sex||""].join(" ").trim(),x.clinic,x.seen?"seen "+fmtDT(x.seen+"T00:00").d:""].filter(Boolean).join(" · ");
+  return`<article class="clcard"><div class="clhead"><div><h3>${esc(x.label||"Clinic patient")}</h3>${meta?`<p class="meta">${esc(meta)}</p>`:""}${x.dx?`<p class="cldx">${esc(x.dx)}</p>`:""}</div>
+    <span class="clcount ${open?"":"ok"}">${open?open+" to do":"all done"}</span></div>
+    <ul class="tlist">${tasks.map(t=>{const due=t.due?dueOf({due:t.due+"T23:59"}):null;return`<li class="titem${t.done?" done":""}"><button class="tbox${t.done?" on":""}" type="button" data-cltdone="${esc(x.id)}|${esc(t.id)}" aria-label="${t.done?"Mark not done":"Mark done"}: ${esc(t.text)}">${t.done?"✓":""}</button><span class="ttext">${esc(t.text)}${t.due?`<em class="${due&&due.over&&!t.done?"over":""}">by ${esc(fmtDT(t.due+"T00:00").d)}</em>`:""}</span>${t.done&&t.doneAt?`<span class="tdone">${esc(fmtDT(t.doneAt).d)}</span>`:"<span></span>"}<button class="rmrow" type="button" data-cltdel="${esc(x.id)}|${esc(t.id)}" aria-label="Delete task">✕</button></li>`;}).join("")}</ul>
+    ${tab==="open"?`<div class="clquick">${["Bring forward CT","Admit","Follow up","Book bloods","Refer"].map(q=>`<button type="button" class="qchip" data-clq="${esc(x.id)}|${esc(q)}">+ ${esc(q)}</button>`).join("")}</div>
+    <form class="cltadd" data-clid="${esc(x.id)}"><input list="dl_cl" autocomplete="off" placeholder="Add a task" aria-label="New task"><input type="date" aria-label="Due by (optional)" title="Due by (optional)"><button class="btn small" type="submit">Add</button></form>`:""}
+    <div class="clfoot">${tab==="open"?`<button class="linkbtn" type="button" data-cladmit="${esc(x.id)}">Admit to ward list</button><button class="linkbtn" type="button" data-clarch="${esc(x.id)}">Mark completed</button>`:`<button class="linkbtn" type="button" data-clarch="${esc(x.id)}">Reopen</button>`}<button class="linkbtn danger" type="button" data-cldel="${esc(x.id)}">Delete</button></div></article>`;}
+
+/* ----- events ----- */
+function listSave(kind){touch(listId(kind));renderAll();}
+function armBtn(b,label,fn){if(b.classList.contains("armed")){fn();return;}b.classList.add("armed");const o=b.textContent;b.textContent=label;setTimeout(()=>{if(b.isConnected){b.classList.remove("armed");b.textContent=o;}},3000);}
+main.addEventListener("submit",ev=>{
+  const f=ev.target;
+  if(f.id==="ocForm"){ev.preventDefault();const txt=f.querySelector("#oc_text").value.trim();if(!txt){f.querySelector("#oc_text").focus();return;}
+    const d=getList("oncall",true);d.items.push({id:uid().slice(0,12),pri:f.querySelector("#oc_pri").value,loc:f.querySelector("#oc_loc").value.trim().slice(0,40),text:txt.slice(0,200),from:f.querySelector("#oc_from").value.trim().slice(0,40),at:nowLocal(),done:false});
+    listSave("oncall");setTimeout(()=>{const i=document.getElementById("oc_loc");if(i)i.focus();},0);return;}
+  if(f.id==="clForm"){ev.preventDefault();const lb=f.querySelector("#cl_label").value.trim();if(!lb){f.querySelector("#cl_label").focus();return;}
+    const d=getList("clinic",true);d.pts.push({id:uid().slice(0,12),label:lb.slice(0,40),clinic:f.querySelector("#cl_clinic").value.trim().slice(0,60),seen:f.querySelector("#cl_seen").value,age:f.querySelector("#cl_age").value,sex:f.querySelector("#cl_sex").value,dx:f.querySelector("#cl_dx").value.trim().slice(0,120),tasks:[],archived:false,created:nowLocal()});
+    listSave("clinic");return;}
+  if(f.classList.contains("cltadd")){ev.preventDefault();const [ti,di]=f.querySelectorAll("input");const txt=ti.value.trim();if(!txt){ti.focus();return;}
+    const d=getList("clinic");const x=d&&d.pts.find(y=>y.id===f.dataset.clid);if(!x)return;
+    x.tasks=x.tasks||[];x.tasks.push({id:uid().slice(0,12),text:txt.slice(0,200),due:di.value||"",done:false});listSave("clinic");}
+});
+main.addEventListener("click",ev=>{
+  const b=ev.target.closest("[data-ocdone],[data-ocdel],[data-occopy],[data-ocend],[data-cltab],[data-cltdone],[data-cltdel],[data-clq],[data-clarch],[data-cldel],[data-cladmit]");if(!b)return;
+  const oc=getList("oncall"),cl=getList("clinic");
+  if(b.dataset.ocdone){const x=oc&&oc.items.find(y=>y.id===b.dataset.ocdone);if(!x)return;x.done=!x.done;if(x.done)x.doneAt=nowLocal();else delete x.doneAt;return listSave("oncall");}
+  if(b.dataset.ocdel){armBtn(b,"Delete?",()=>{oc.items=oc.items.filter(y=>y.id!==b.dataset.ocdel);listSave("oncall");});return;}
+  if(b.dataset.occopy!=null){const open=(oc&&oc.items||[]).filter(x=>!x.done).sort((a,c)=>(PRI_ORD[a.pri]??2)-(PRI_ORD[c.pri]??2));
+    const txt="On-call handover ("+fmtDT(nowLocal()).d+" "+fmtDT(nowLocal()).t+")\n"+(open.length?open.map(x=>"- ["+((PRI.find(p=>p[0]===x.pri)||PRI[2])[1])+"] "+(x.loc?x.loc+": ":"")+x.text).join("\n"):"No open tasks.");
+    const msg=document.getElementById("ocmsg");
+    (navigator.clipboard?navigator.clipboard.writeText(txt):Promise.reject()).then(()=>{if(msg)msg.textContent="Handover list copied.";}).catch(()=>{if(msg){msg.innerHTML="";const ta=document.createElement("textarea");ta.value=txt;ta.rows=6;ta.style.width="100%";msg.appendChild(ta);ta.select();}});return;}
+  if(b.dataset.ocend!=null){if(!oc){return;}armBtn(b,"Click again to end shift",()=>{const done=oc.items.filter(x=>x.done);
+    if(done.length){oc.shifts=oc.shifts||[];oc.shifts.push({id:uid().slice(0,12),start:oc.shiftStart||nowLocal(),end:nowLocal(),items:done});}
+    if(oc.shifts&&oc.shifts.length>30)oc.shifts=oc.shifts.slice(-30);
+    oc.items=oc.items.filter(x=>!x.done);oc.shiftStart=nowLocal();listSave("oncall");});return;}
+  if(b.dataset.cltab){S.clTab=b.dataset.cltab;renderMain();return;}
+  const [pid,tid]=(b.dataset.cltdone||b.dataset.cltdel||b.dataset.clq||b.dataset.clarch||b.dataset.cldel||b.dataset.cladmit||"").split("|");
+  const x=cl&&cl.pts.find(y=>y.id===pid);if(!x)return;
+  if(b.dataset.cltdone){const t=x.tasks.find(y=>y.id===tid);if(!t)return;t.done=!t.done;if(t.done)t.doneAt=nowLocal();else delete t.doneAt;return listSave("clinic");}
+  if(b.dataset.cltdel){armBtn(b,"Delete?",()=>{x.tasks=x.tasks.filter(y=>y.id!==tid);listSave("clinic");});return;}
+  if(b.dataset.clq){x.tasks=x.tasks||[];x.tasks.push({id:uid().slice(0,12),text:tid,due:"",done:false});return listSave("clinic");}
+  if(b.dataset.clarch){x.archived=!x.archived;return listSave("clinic");}
+  if(b.dataset.cldel){armBtn(b,"Click again to delete",()=>{cl.pts=cl.pts.filter(y=>y.id!==pid);listSave("clinic");});return;}
+  if(b.dataset.cladmit){armBtn(b,"Click again to add to ward",()=>{const id=uid();const np=blank();Object.assign(np,{name:x.label,age:x.age||"",sex:x.sex||"",dx:x.dx||"",admitted:todayStr()});
+    np.notes=[{id:uid().slice(0,12),dt:nowLocal(),text:"Admitted from "+(x.clinic||"clinic")+"."}];
+    S.patients[id]=np;S.examples=null;x.tasks=x.tasks||[];const at=x.tasks.find(t=>/^admit/i.test(t.text)&&!t.done);if(at){at.done=true;at.doneAt=nowLocal();}
+    touch(id);touch(listId("clinic"));S.cur=id;S.view="patient";S.tab="active";renderAll();window.scrollTo(0,0);});return;}
+});
+$("#ocBtn").addEventListener("click",()=>{S.view="oncall";renderAll();window.scrollTo(0,0);});
+$("#clBtn").addEventListener("click",()=>{S.view="clinic";renderAll();window.scrollTo(0,0);});
+
+/* ---------- Imaging hub: every scan to book, from everywhere ---------- */
+const IMG_RE=/\b(ct|cect|ctpa|ctkub|hrct|cxr|axr|x-?rays?|xr|mri|mrcp|mra|mrv|u\/s|uss|ultrasound|scans?|echo|tte|toe|doppler|dopplers|fluoro\w*|pet|mammo\w*|imaging|dexa|barium|ivu|venogram|angiogram|v\/q)\b/i;
+const isImg=t=>IMG_RE.test(t||"")||/\bUSS?\b/.test(t||"");
+const IMG_MODS=["X-ray","CT","MRI","Ultrasound","Echo","Doppler","Fluoroscopy","Nuclear / PET","Mammography","Other"];
+function imgWho(p){return[p.name||"Unnamed patient",p.ward].filter(Boolean).join(" · ");}
+function collectImaging(){
+  const rows=[];const t=todayStr();
+  for(const [pid,p] of ordered()){if(stOf(p)==="deceased")continue;const dis=stOf(p)==="discharged";
+    for(const e of (p.rad||[])){const st=e.status||"";if(!/^(requested|booked)$/i.test(st))continue;
+      rows.push({key:"rad|"+pid+"|"+e.id,src:"ward",pid,obj:e,kind:"rad",who:imgWho(p),dis,what:[e.modality,e.study].filter(Boolean).join(" · ")||"Imaging",at:e.dt,booked:/booked/i.test(st),bookedFor:e.bookedFor||"",urgent:false});}
+    for(const x of (p.todo||[]))if(!x.done&&x.day<=t&&isImg(x.text))rows.push({key:"todo|"+pid+"|"+x.id,src:"ward",pid,obj:x,kind:"job",who:imgWho(p),dis,what:x.text,at:x.created||x.day,booked:!!x.booked,bookedFor:x.bookedFor||"",urgent:false,tag:"today's jobs"});
+    for(const x of (p.chase||[]))if(!x.done&&(x.cat==="Imaging"||isImg(x.text)))rows.push({key:"chase|"+pid+"|"+x.id,src:"ward",pid,obj:x,kind:"chase",who:imgWho(p),dis,what:x.text,at:x.created,booked:!!x.booked,bookedFor:x.bookedFor||"",urgent:false,tag:"to chase"});}
+  const cl=getList("clinic");if(cl)for(const c of (cl.pts||[]))if(!c.archived)for(const x of (c.tasks||[]))if(!x.done&&isImg(x.text))
+    rows.push({key:"cl|"+c.id+"|"+x.id,src:"clinic",cid:c.id,obj:x,kind:"cltask",who:[c.label,c.clinic].filter(Boolean).join(" · "),what:x.text,at:c.seen,booked:!!x.booked,bookedFor:x.bookedFor||x.due||"",urgent:false});
+  const oc=getList("oncall");if(oc)for(const x of (oc.items||[]))if(!x.done&&isImg(x.text))
+    rows.push({key:"oc|"+x.id,src:"oncall",obj:x,kind:"ocitem",who:x.loc||"On-call",what:x.text,at:x.at,booked:!!x.booked,bookedFor:x.bookedFor||"",urgent:x.pri==="urgent"});
+  const im=getList("imaging");if(im)for(const x of (im.items||[]))if(x.status!=="done")
+    rows.push({key:"im|"+x.id,src:"list",obj:x,kind:"item",who:x.who||"",what:[x.modality,x.study].filter(Boolean).join(" · "),at:x.created,booked:x.status==="booked",bookedFor:x.bookedFor||"",urgent:!!x.urgent,note:x.note});
+  rows.sort((a,b)=>(b.urgent-a.urgent)||((a.at||"")<(b.at||"")?-1:1));
+  return rows;}
+function imgCount(){return collectImaging().filter(r=>!r.booked).length;}
+const SRC_LABEL={ward:"Ward",clinic:"Clinic",oncall:"On-call",list:"Added here"};
+function imgRow(r){
+  const bf=r.bookedFor?fmtDT(r.bookedFor.length>10?r.bookedFor:r.bookedFor+"T00:00"):null;
+  return`<li class="imrow${r.urgent?" urgent":""}"><span class="imsrc ${r.src}">${SRC_LABEL[r.src]}</span>
+    <div class="imbody"><span><b>${esc(r.what)}</b>${r.urgent?` <span class="ocpri urgent" style="padding:1px 6px;margin-left:4px">Urgent</span>`:""}</span>
+      <span class="immeta">${r.who?`<button type="button" class="imwho" data-imgo="${esc(r.key)}">${esc(r.who)}</button>`:""}${r.dis?" · discharged":""}${r.tag?" · from "+esc(r.tag):""}${r.at?" · added "+esc(fmtDT(r.at.length>10?r.at:r.at+"T00:00").d):""}${r.booked&&bf?" · <strong>booked for "+esc(bf.d)+(r.bookedFor.length>10?" "+esc(bf.t):"")+"</strong>":r.booked?" · <strong>booked</strong>":""}</span>${r.note?`<span class="immeta">${esc(r.note)}</span>`:""}</div>
+    <div class="imact">${r.booked?`<button class="btn small" type="button" data-img="done|${esc(r.key)}">Scan done</button><button class="linkbtn" type="button" data-img="unbook|${esc(r.key)}">Not booked</button>`
+      :`<input type="date" class="imdate" data-imgdate="${esc(r.key)}" aria-label="Booked for (optional)" title="Booked for (optional)"><button class="btn small primary" type="button" data-img="book|${esc(r.key)}">Booked</button>`}
+      ${r.src==="list"?`<button class="rmrow" type="button" data-img="del|${esc(r.key)}" aria-label="Delete">✕</button>`:""}</div></li>`;}
+function renderImaging(m){
+  const rows=collectImaging();S.imgRows={};rows.forEach(r=>S.imgRows[r.key]=r);
+  const tob=rows.filter(r=>!r.booked),bk=rows.filter(r=>r.booked);
+  const im=getList("imaging");const recent=((im&&im.items)||[]).filter(x=>x.status==="done").sort((a,b)=>(a.doneAt||"")<(b.doneAt||"")?1:-1).slice(0,30);
+  let h=`<section class="img"><div class="ochead"><h2>Imaging</h2><span class="tcount">${tob.length} to book · ${bk.length} booked</span></div>
+   <p class="shint">Everything here comes from ward patients (Radiology entries marked Requested or Booked, plus scan-related jobs and chase items), clinic tasks, on-call tasks, and anything you add below. Booking or completing it here also updates it where it came from.</p>
+   <form class="imadd" id="imForm"><select id="im_mod" aria-label="Modality">${IMG_MODS.map(x=>`<option>${esc(x)}</option>`).join("")}</select>
+     <input id="im_study" autocomplete="off" placeholder="Study, e.g. CT abdomen/pelvis + contrast" aria-label="Study">
+     <input id="im_who" autocomplete="off" placeholder="Patient / ward-bed" aria-label="Patient or location">
+     <select id="im_urg" aria-label="Urgency"><option value="">Routine</option><option value="1">Urgent</option></select>
+     <button class="btn primary small" type="submit">Add</button></form>
+   <h3 class="imh">To book <span>${tob.length}</span></h3>${tob.length?`<ul class="imlist">${tob.map(imgRow).join("")}</ul>`:`<p class="tnone">Nothing waiting to be booked.</p>`}
+   <h3 class="imh">Booked, waiting for scan <span>${bk.length}</span></h3>${bk.length?`<ul class="imlist">${bk.map(imgRow).join("")}</ul>`:`<p class="tnone">No booked scans waiting.</p>`}`;
+  if(recent.length)h+=`<details class="thist"><summary>Done recently (${recent.length}, added here)</summary><div class="tday"><ul>${recent.map(x=>`<li class="ok"><span class="mk">✓</span><span>${esc([x.modality,x.study].filter(Boolean).join(" · "))}${x.who?" · "+esc(x.who):""}</span><span class="tm">${esc(x.doneAt?fmtDT(x.doneAt).d:"")}</span></li>`).join("")}</ul></div></details>`;
+  m.innerHTML=h+`</section>`;}
+function guessMod(t){t=t||"";
+  if(/\b(ct|cect|ctpa|ctkub|hrct)\b/i.test(t))return"CT";if(/\b(mri|mrcp|mra|mrv)\b/i.test(t))return"MRI";
+  if(/\b(cxr|axr|x-?rays?|xr)\b/i.test(t))return"X-ray";if(/\bUSS?\b|\bu\/s\b|ultrasound/i.test(t))return"Ultrasound";
+  if(/\b(echo|tte|toe)\b/i.test(t))return"Echo";if(/doppler/i.test(t))return"Doppler";if(/fluoro|barium|venogram|angiogram/i.test(t))return"Fluoroscopy";
+  if(/\b(pet|v\/q)\b/i.test(t))return"Nuclear / PET";if(/mammo/i.test(t))return"Mammography";return"Other";}
+function cleanStudy(t){return String(t||"").replace(/^\s*(book|bring forward|arrange|request|order|get|chase)\s+/i,"").replace(/\s+(slot|booking)\s*$/i,"").trim()||"Imaging";}
+function imgSave(r){if(r.src==="ward")touch(r.pid);else touch(listId(r.src==="list"?"imaging":r.src));renderAll();}
+main.addEventListener("submit",ev=>{const f=ev.target;if(f.id!=="imForm")return;ev.preventDefault();
+  const st=f.querySelector("#im_study").value.trim();if(!st){f.querySelector("#im_study").focus();return;}
+  const d=getList("imaging",true);d.items.push({id:uid().slice(0,12),modality:f.querySelector("#im_mod").value,study:st.slice(0,120),who:f.querySelector("#im_who").value.trim().slice(0,60),urgent:!!f.querySelector("#im_urg").value,status:"tobook",created:nowLocal()});
+  touch(listId("imaging"));renderAll();setTimeout(()=>{const i=document.getElementById("im_study");if(i)i.focus();},0);});
+main.addEventListener("click",ev=>{
+  const g=ev.target.closest("[data-imgo]");
+  if(g){const r=(S.imgRows||{})[g.dataset.imgo];if(!r)return;
+    if(r.src==="ward"){S.cur=r.pid;S.view="patient";S.tab=stOf(S.patients[r.pid]);}else if(r.src==="clinic"){S.view="clinic";S.clTab="open";}else if(r.src==="oncall")S.view="oncall";
+    renderAll();window.scrollTo(0,0);return;}
+  const b=ev.target.closest("[data-img]");if(!b)return;
+  const i=b.dataset.img.indexOf("|");const act=b.dataset.img.slice(0,i),key=b.dataset.img.slice(i+1);const r=(S.imgRows||{})[key];if(!r)return;const o=r.obj;
+  if(act==="book"){const inp=main.querySelector(`[data-imgdate="${CSS.escape(key)}"]`);const dt=inp&&inp.value||"";
+    if(r.kind==="rad"){o.status="Booked";o.bookedFor=dt;}else if(r.kind==="item"){o.status="booked";o.bookedFor=dt;}else{o.booked=nowLocal();o.bookedFor=dt;}}
+  else if(act==="unbook"){if(r.kind==="rad"){o.status="Requested";delete o.bookedFor;}else if(r.kind==="item"){o.status="tobook";delete o.bookedFor;}else{delete o.booked;delete o.bookedFor;}}
+  else if(act==="done"){if(r.kind==="rad")o.status="Done, awaiting report";else if(r.kind==="item"){o.status="done";o.doneAt=nowLocal();}else{o.done=true;o.doneAt=nowLocal();}
+    if(r.src==="ward"&&(r.kind==="job"||r.kind==="chase")){const pt=S.patients[r.pid];
+      if(pt){pt.rad=pt.rad||[];pt.rad.push({id:uid().slice(0,12),dt:nowLocal(),modality:guessMod(o.text),study:cleanStudy(o.text),status:"Done, awaiting report",impression:"",report:"",files:[],fromTask:true});}}}
+  else if(act==="del"&&r.kind==="item"){if(!b.classList.contains("armed")){b.classList.add("armed");b.textContent="Delete?";setTimeout(()=>{if(b.isConnected){b.classList.remove("armed");b.textContent="✕";}},3000);return;}
+    const d=getList("imaging");d.items=d.items.filter(x=>x.id!==o.id);}
+  else return;
+  imgSave(r);});
+$("#imBtn").addEventListener("click",()=>{S.view="imaging";renderAll();window.scrollTo(0,0);});
 
 /* ---------- Boot ---------- */
 function useLocal(){
